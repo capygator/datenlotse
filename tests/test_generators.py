@@ -105,14 +105,22 @@ def test_default_output_is_workspace_out(tmp_path: Path) -> None:
     assert (ws / "out" / "odcs" / "auftragsbestand-cockpit.odcs.yaml").is_file()
 
 
-def test_generator_removes_stale_files(tmp_path: Path) -> None:
+def test_generator_replaces_only_own_files(tmp_path: Path) -> None:
     ws = tmp_path / "nordwind"
     shutil.copytree(NORDWIND, ws, ignore=shutil.ignore_patterns(".lotse", "out"))
     stale = ws / "out" / "tmdl" / "auftragsbestand-cockpit" / "alt.tmdl"
     stale.parent.mkdir(parents=True)
     stale.write_text("alt")
+    foreign = ws / "out" / "tmdl" / "handgepflegt.txt"
+    foreign.write_text("bleibt")
+    old_contract = ws / "out" / "odcs" / "entfernt.odcs.yaml"
+    old_contract.parent.mkdir(parents=True)
+    old_contract.write_text("alt")
     _invoke("gen", "tmdl", "-w", str(ws))
+    _invoke("gen", "odcs", "-w", str(ws))
     assert not stale.exists()
+    assert not old_contract.exists()
+    assert foreign.read_text() == "bleibt"
 
 
 # --- Sichten ---------------------------------------------------------------------------------

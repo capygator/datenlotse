@@ -87,10 +87,21 @@ def product_scope(index: Index, product: Product) -> tuple[list[Measure], list[T
     return measures, tables
 
 
-def write_tree(target: Path, files: dict[str, str]) -> list[Path]:
-    """Generator-eigenen Ordner leeren und Dateien (UTF-8, LF) schreiben."""
-    if target.exists():
-        shutil.rmtree(target)
+def write_tree(target: Path, files: dict[str, str], stale_glob: str | None = None) -> list[Path]:
+    """Dateien (UTF-8, LF) schreiben; vorher nur Generator-eigene Altlasten entfernen.
+
+    Entfernt werden die obersten Einträge, die gleich neu geschrieben werden (z. B. ein
+    Projektordner je Produkt), sowie Dateien in ``target``, die auf ``stale_glob`` passen.
+    Andere Inhalte von ``target`` bleiben unangetastet.
+    """
+    doomed = {target / rel.split("/", 1)[0] for rel in files}
+    if stale_glob and target.is_dir():
+        doomed.update(target.glob(stale_glob))
+    for path in sorted(doomed):
+        if path.is_dir() and not path.is_symlink():
+            shutil.rmtree(path)
+        elif path.exists() or path.is_symlink():
+            path.unlink()
     written = []
     for rel in sorted(files):
         path = target / rel

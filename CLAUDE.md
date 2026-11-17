@@ -20,7 +20,7 @@ uv run lotse render archify --view lineage -w demo/nordwind   # → demo/nordwin
 LOTSE_UPDATE_SNAPSHOTS=1 uv run pytest tests/test_generators.py  # Generator-Snapshots neu schreiben
 ```
 
-CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`, `render <mermaid|archify> --view <name>`, `render views`, `gen <odcs|tmdl>`. Ausgabe von `render`/`gen` standardmäßig nach `<workspace>/out/` (gitignored), `-o DIR` überschreibt; `gen` schreibt in `<out>/<generator>/` und leert diesen Ordner vorher. Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
+CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`, `render <mermaid|archify> --view <name>`, `render views`, `gen <odcs|tmdl>`. Ausgabe von `render`/`gen` standardmäßig nach `<workspace>/out/` (gitignored), `-o DIR` überschreibt; `gen` schreibt in `<out>/<generator>/` und ersetzt dort nur eigene Ausgaben (Projektordner je Produkt bzw. `*.odcs.yaml`). Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
 
 ## Architektur
 
