@@ -1,0 +1,85 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "from_tables": {
+      "default": [],
+      "items": {
+        "pattern": "^table\\.[a-z0-9][a-z0-9_-]*$",
+        "type": "string"
+      },
+      "title": "From Tables",
+      "type": "array"
+    },
+    "hierarchy": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Hierarchy",
+      "type": "array"
+    },
+    "id": {
+      "pattern": "^dimension\\.[a-z0-9][a-z0-9_-]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "owner": {
+      "anyOf": [
+        {
+          "pattern": "^stakeholder\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Owner"
+    },
+    "statement": {
+      "anyOf": [
+        {
+          "pattern": "^statement\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Statement"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "agreed",
+        "conflict"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "id"
+  ],
+  "title": "Dimension",
+  "type": "object"
+}

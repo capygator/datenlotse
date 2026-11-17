@@ -1,0 +1,6 @@
+id: source.crm
+name: CRM
+status: agreed
+owner: stakeholder.vertrieb-leitung
+system: CRM Vertrieb
+objects: [Accounts, Vertriebsgebiete]

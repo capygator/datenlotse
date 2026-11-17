@@ -1,0 +1,15 @@
+id: measure.kapazitaetsauslastung
+name: Kapazitätsauslastung
+status: agreed
+owner: stakeholder.fertigung-leitung
+unit: '%'
+grain: [dimension.werk, dimension.monat]
+definitions:
+  - by: stakeholder.fertigung-leitung
+    text: Geplante Fertigungsstunden aus dem Auftragsbestand geteilt durch verfügbare Kapazitätsstunden
+    statement: statement.0003
+time_logic: Planmonat
+serves: [decision.kapazitaetsplanung]
+from_tables: [table.fact_auftragsposition, table.fact_kapazitaet]
+quality:
+  - rule: not_negative

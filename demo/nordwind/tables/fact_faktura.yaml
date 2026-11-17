@@ -1,0 +1,20 @@
+id: table.fact_faktura
+name: Fakt Faktura
+status: agreed
+kind: fact
+from_sources: [source.erp]
+columns:
+  - name: fakturaposition_id
+    type: string
+    key: true
+  - name: kunde_id
+    type: string
+    references: table.dim_kunde
+  - name: produkt_id
+    type: string
+    references: table.dim_produkt
+  - name: fakturadatum
+    type: date
+    references: table.dim_datum
+  - name: nettoumsatz
+    type: decimal

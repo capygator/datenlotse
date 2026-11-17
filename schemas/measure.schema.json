@@ -1,0 +1,196 @@
+{
+  "$defs": {
+    "Definition": {
+      "additionalProperties": false,
+      "properties": {
+        "by": {
+          "pattern": "^stakeholder\\.[a-z0-9][a-z0-9_-]*$",
+          "title": "By",
+          "type": "string"
+        },
+        "statement": {
+          "anyOf": [
+            {
+              "pattern": "^statement\\.[a-z0-9][a-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statement"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "by",
+        "text"
+      ],
+      "title": "Definition",
+      "type": "object"
+    },
+    "QualityRule": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "rule": {
+          "title": "Rule",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule"
+      ],
+      "title": "QualityRule",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "definitions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Definition"
+      },
+      "title": "Definitions",
+      "type": "array"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "from_tables": {
+      "default": [],
+      "items": {
+        "pattern": "^table\\.[a-z0-9][a-z0-9_-]*$",
+        "type": "string"
+      },
+      "title": "From Tables",
+      "type": "array"
+    },
+    "grain": {
+      "default": [],
+      "items": {
+        "pattern": "^dimension\\.[a-z0-9][a-z0-9_-]*$",
+        "type": "string"
+      },
+      "title": "Grain",
+      "type": "array"
+    },
+    "id": {
+      "pattern": "^measure\\.[a-z0-9][a-z0-9_-]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "owner": {
+      "anyOf": [
+        {
+          "pattern": "^stakeholder\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Owner"
+    },
+    "quality": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/QualityRule"
+      },
+      "title": "Quality",
+      "type": "array"
+    },
+    "serves": {
+      "default": [],
+      "items": {
+        "pattern": "^decision\\.[a-z0-9][a-z0-9_-]*$",
+        "type": "string"
+      },
+      "title": "Serves",
+      "type": "array"
+    },
+    "statement": {
+      "anyOf": [
+        {
+          "pattern": "^statement\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Statement"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "agreed",
+        "conflict"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "time_logic": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Time Logic"
+    },
+    "unit": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Unit"
+    }
+  },
+  "required": [
+    "name",
+    "id"
+  ],
+  "title": "Measure",
+  "type": "object"
+}

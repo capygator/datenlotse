@@ -1,0 +1,14 @@
+id: product.auftragsbestand-cockpit
+name: Auftragsbestand-Cockpit
+status: agreed
+owner: stakeholder.controlling-leitung
+statement: statement.0002
+kind: semantic_model
+serves: [decision.kapazitaetsplanung]
+measures:
+  - measure.auftragsbestand
+  - measure.auftragseingang
+  - measure.auftragsreichweite
+  - measure.kapazitaetsauslastung
+  - measure.liefertreue
+  - measure.umsatz

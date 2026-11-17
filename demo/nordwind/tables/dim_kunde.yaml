@@ -1,0 +1,17 @@
+id: table.dim_kunde
+name: Dim Kunde
+status: agreed
+kind: dimension
+from_sources: [source.crm, source.erp]
+columns:
+  - name: kunde_id
+    type: string
+    key: true
+  - name: kunde
+    type: string
+  - name: kundengruppe
+    type: string
+  - name: vertriebsgebiet
+    type: string
+  - name: region
+    type: string

@@ -1,0 +1,5 @@
+id: dimension.kunde
+name: Kunde
+status: agreed
+hierarchy: [Kundengruppe, Kunde]
+from_tables: [table.dim_kunde]

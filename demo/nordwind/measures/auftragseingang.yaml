@@ -1,0 +1,15 @@
+id: measure.auftragseingang
+name: Auftragseingang
+status: agreed
+owner: stakeholder.vertrieb-leitung
+unit: EUR
+grain: [dimension.vertriebsregion, dimension.produkt, dimension.monat]
+definitions:
+  - by: stakeholder.vertrieb-leitung
+    text: Nettowert der im Monat bestätigten Auftragspositionen
+    statement: statement.0004
+time_logic: Bestätigungsdatum im Betrachtungsmonat
+serves: [decision.kapazitaetsplanung]
+from_tables: [table.fact_auftragsposition]
+quality:
+  - rule: not_negative

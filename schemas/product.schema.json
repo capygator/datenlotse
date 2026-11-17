@@ -1,0 +1,95 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "id": {
+      "pattern": "^product\\.[a-z0-9][a-z0-9_-]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "default": "semantic_model",
+      "enum": [
+        "report",
+        "semantic_model"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "measures": {
+      "default": [],
+      "items": {
+        "pattern": "^measure\\.[a-z0-9][a-z0-9_-]*$",
+        "type": "string"
+      },
+      "title": "Measures",
+      "type": "array"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "owner": {
+      "anyOf": [
+        {
+          "pattern": "^stakeholder\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Owner"
+    },
+    "serves": {
+      "default": [],
+      "items": {
+        "pattern": "^decision\\.[a-z0-9][a-z0-9_-]*$",
+        "type": "string"
+      },
+      "title": "Serves",
+      "type": "array"
+    },
+    "statement": {
+      "anyOf": [
+        {
+          "pattern": "^statement\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Statement"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "agreed",
+        "conflict"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "id"
+  ],
+  "title": "Product",
+  "type": "object"
+}

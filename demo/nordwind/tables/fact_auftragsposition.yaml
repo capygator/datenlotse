@@ -1,0 +1,27 @@
+id: table.fact_auftragsposition
+name: Fakt Auftragsposition
+status: agreed
+kind: fact
+from_sources: [source.erp]
+columns:
+  - name: auftragsposition_id
+    type: string
+    key: true
+  - name: kunde_id
+    type: string
+    references: table.dim_kunde
+  - name: produkt_id
+    type: string
+    references: table.dim_produkt
+  - name: werk_id
+    type: string
+    references: table.dim_werk
+  - name: bestaetigt_am
+    type: date
+    references: table.dim_datum
+  - name: nettowert
+    type: decimal
+  - name: offener_wert
+    type: decimal
+  - name: fertigungsstunden
+    type: decimal

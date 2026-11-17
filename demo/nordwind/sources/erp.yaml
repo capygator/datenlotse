@@ -1,0 +1,6 @@
+id: source.erp
+name: ERP
+status: agreed
+owner: stakeholder.controlling-leitung
+system: SAP S/4HANA
+objects: [KNA1, LIKP, LIPS, MARA, T001W, TFACS, VBAK, VBAP, VBRK, VBRP]

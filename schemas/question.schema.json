@@ -1,0 +1,77 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "about": {
+      "default": [],
+      "items": {
+        "pattern": "^(decision|product|measure|dimension|table|source|stakeholder|statement|question)\\.[a-z0-9][a-z0-9_-]*$",
+        "type": "string"
+      },
+      "title": "About",
+      "type": "array"
+    },
+    "answer": {
+      "anyOf": [
+        {
+          "pattern": "^statement\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Answer"
+    },
+    "id": {
+      "pattern": "^question\\.[a-z0-9][a-z0-9_-]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "owner": {
+      "anyOf": [
+        {
+          "pattern": "^stakeholder\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Owner"
+    },
+    "statement": {
+      "anyOf": [
+        {
+          "pattern": "^statement\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Statement"
+    },
+    "status": {
+      "default": "open",
+      "enum": [
+        "open",
+        "answered"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "text"
+  ],
+  "title": "Question",
+  "type": "object"
+}

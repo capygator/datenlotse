@@ -1,0 +1,11 @@
+id: table.dim_werk
+name: Dim Werk
+status: agreed
+kind: dimension
+from_sources: [source.erp, source.mes]
+columns:
+  - name: werk_id
+    type: string
+    key: true
+  - name: werk
+    type: string

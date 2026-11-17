@@ -1,0 +1,16 @@
+id: table.dim_datum
+name: Dim Datum
+description: Fabrikkalender aus dem ERP
+status: agreed
+kind: dimension
+from_sources: [source.erp]
+columns:
+  - name: datum
+    type: date
+    key: true
+  - name: monat
+    type: string
+  - name: quartal
+    type: string
+  - name: jahr
+    type: int64

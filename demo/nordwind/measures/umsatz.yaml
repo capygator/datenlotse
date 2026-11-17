@@ -1,0 +1,13 @@
+id: measure.umsatz
+name: Umsatz
+status: agreed
+owner: stakeholder.controlling-leitung
+unit: EUR
+grain: [dimension.kunde, dimension.produkt, dimension.monat]
+definitions:
+  - by: stakeholder.controlling-leitung
+    text: Fakturierter Nettoumsatz
+    statement: statement.0005
+time_logic: Fakturadatum im Betrachtungsmonat
+serves: [decision.kapazitaetsplanung]
+from_tables: [table.fact_faktura]
