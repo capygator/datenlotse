@@ -1,0 +1,81 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "id": {
+      "pattern": "^source\\.[a-z0-9][a-z0-9_-]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "objects": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Objects",
+      "type": "array"
+    },
+    "owner": {
+      "anyOf": [
+        {
+          "pattern": "^stakeholder\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Owner"
+    },
+    "statement": {
+      "anyOf": [
+        {
+          "pattern": "^statement\\.[a-z0-9][a-z0-9_-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Statement"
+    },
+    "status": {
+      "default": "draft",
+      "enum": [
+        "draft",
+        "agreed",
+        "conflict"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "system": {
+      "title": "System",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "id",
+    "system"
+  ],
+  "title": "Source",
+  "type": "object"
+}

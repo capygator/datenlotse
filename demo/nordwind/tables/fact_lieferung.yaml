@@ -1,0 +1,20 @@
+id: table.fact_lieferung
+name: Fakt Lieferung
+status: agreed
+kind: fact
+from_sources: [source.erp]
+columns:
+  - name: lieferposition_id
+    type: string
+    key: true
+  - name: auftragsposition_id
+    type: string
+  - name: kunde_id
+    type: string
+    references: table.dim_kunde
+  - name: werk_id
+    type: string
+    references: table.dim_werk
+  - name: lieferdatum
+    type: date
+    references: table.dim_datum

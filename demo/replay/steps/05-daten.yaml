@@ -1,0 +1,46 @@
+act: 4
+title: Realitätscheck
+question: Aus welchen Systemen kommen die Daten, und wo steht der zugesagte Liefertermin?
+answer: Aufträge, Lieferungen und Faktura aus dem ERP, Kapazitäten aus dem MES, Kunden aus dem CRM. Den zugesagten Liefertermin kennen wir nicht, der steht nur in den E-Mails des Vertriebs.
+by: stakeholder.fertigung-leitung
+copy:
+  - statements/0007.yaml
+  - statements/0009.yaml
+  - sources/crm.yaml
+  - sources/erp.yaml
+  - sources/mes.yaml
+  - tables/dim_datum.yaml
+  - tables/dim_kunde.yaml
+  - tables/dim_produkt.yaml
+  - tables/dim_werk.yaml
+  - tables/fact_auftragsposition.yaml
+  - tables/fact_faktura.yaml
+  - tables/fact_kapazitaet.yaml
+  - tables/fact_lieferung.yaml
+  - tables/fact_lieferzusage.yaml
+  - dimensions/kunde.yaml
+  - dimensions/monat.yaml
+  - dimensions/produkt.yaml
+  - dimensions/vertriebsregion.yaml
+  - dimensions/werk.yaml
+  - questions/liefertermin-quelle.yaml
+expect:
+  - {rule: dimension_unused, node: dimension.kunde}
+  - {rule: dimension_unused, node: dimension.monat}
+  - {rule: dimension_unused, node: dimension.produkt}
+  - {rule: dimension_unused, node: dimension.vertriebsregion}
+  - {rule: dimension_unused, node: dimension.werk}
+  - {rule: measure_definition_conflict, node: measure.auftragsbestand}
+  - {rule: measure_without_table, node: measure.auftragsbestand}
+  - {rule: measure_without_table, node: measure.auftragseingang}
+  - {rule: measure_without_table, node: measure.auftragsreichweite}
+  - {rule: measure_without_table, node: measure.kapazitaetsauslastung}
+  - {rule: measure_without_table, node: measure.liefertreue}
+  - {rule: measure_without_table, node: measure.umsatz}
+  - {rule: missing_grain, node: measure.auftragsbestand}
+  - {rule: missing_grain, node: measure.auftragseingang}
+  - {rule: missing_grain, node: measure.auftragsreichweite}
+  - {rule: missing_grain, node: measure.kapazitaetsauslastung}
+  - {rule: missing_grain, node: measure.liefertreue}
+  - {rule: missing_grain, node: measure.umsatz}
+  - {rule: table_without_source, node: table.fact_lieferzusage}

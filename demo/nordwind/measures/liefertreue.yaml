@@ -1,0 +1,15 @@
+id: measure.liefertreue
+name: Liefertreue
+status: draft
+owner: stakeholder.vertrieb-leitung
+unit: '%'
+grain: [dimension.kunde, dimension.werk, dimension.monat]
+definitions:
+  - by: stakeholder.vertrieb-leitung
+    text: Anteil der Lieferpositionen, die spätestens am zugesagten Liefertermin geliefert wurden
+    statement: statement.0006
+time_logic: Lieferdatum im Betrachtungsmonat
+serves: [decision.kapazitaetsplanung]
+from_tables: [table.fact_lieferung, table.fact_lieferzusage]
+quality:
+  - rule: between_0_and_100

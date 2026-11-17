@@ -1,0 +1,513 @@
+{
+  "format": "lotse-ado-backlog/1",
+  "workspace": "Nordwind Maschinenbau GmbH",
+  "scope": "nordwind",
+  "items": [
+    {
+      "key": "product.auftragsbestand-cockpit",
+      "level": "epic",
+      "title": "Datenprodukt: Auftragsbestand-Cockpit",
+      "parent": null,
+      "origin": "product.auftragsbestand-cockpit",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:product.auftragsbestand-cockpit"
+      ],
+      "description": [
+        "Art: Semantisches Modell",
+        "Stützt Entscheidung: Kapazitätsplanung Fertigung (Monatliche Festlegung des Schichtmodells je Werk)",
+        "Kennzahlen: Auftragsbestand, Auftragseingang, Auftragsreichweite, Kapazitätsauslastung, Liefertreue, Umsatz",
+        "Owner: Leitung Controlling",
+        "Status: agreed",
+        "Herkunft: „Das Cockpit ist für die Geschäftsführung, die Zahlen verantwortet das Controlling.“ (Geschäftsführung, statement.0002)",
+        "Erzeugt von lotse aus product.auftragsbestand-cockpit. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Semantisches Modell „Auftragsbestand-Cockpit“ ist bereitgestellt.",
+        "Alle 6 Kennzahlen sind enthalten und abgenommen.",
+        "Stützt die Entscheidung „Kapazitätsplanung Fertigung“.",
+        "Fachliche Abnahme durch Leitung Controlling."
+      ]
+    },
+    {
+      "key": "measure.auftragsbestand",
+      "level": "feature",
+      "title": "Kennzahl: Auftragsbestand",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "measure.auftragsbestand",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:measure.auftragsbestand"
+      ],
+      "description": [
+        "Definition (Leitung Vertrieb): Summe aller bestätigten, noch nicht gelieferten Auftragspositionen",
+        "Einheit: EUR",
+        "Granularität: Kunde, Produkt, Monat",
+        "Zeitlogik: Stichtag Monatsende",
+        "Datengrundlage: Fakt Auftragsposition",
+        "Qualitätsregeln: not_negative",
+        "Stützt Entscheidung: Kapazitätsplanung Fertigung",
+        "Owner: Leitung Controlling",
+        "Status: agreed",
+        "Herkunft: „Wir nehmen die Definition des Vertriebs. Für die Kapazitätsplanung zählt, was noch nicht geliefert ist, nicht, was fakturiert ist.“ (Geschäftsführung, statement.0012)",
+        "Herkunft: „Auftragsbestand ist die Summe aller bestätigten, noch nicht gelieferten Auftragspositionen.“ (Leitung Vertrieb, statement.0010)",
+        "Erzeugt von lotse aus measure.auftragsbestand. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Berechnung entspricht der Definition: „Summe aller bestätigten, noch nicht gelieferten Auftragspositionen“.",
+        "Auswertbar je Kunde, Produkt, Monat.",
+        "Zeitlogik umgesetzt: Stichtag Monatsende.",
+        "Qualitätsregel „not_negative“ ist geprüft.",
+        "Fachliche Abnahme durch Leitung Controlling."
+      ]
+    },
+    {
+      "key": "measure.auftragseingang",
+      "level": "feature",
+      "title": "Kennzahl: Auftragseingang",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "measure.auftragseingang",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:measure.auftragseingang"
+      ],
+      "description": [
+        "Definition (Leitung Vertrieb): Nettowert der im Monat bestätigten Auftragspositionen",
+        "Einheit: EUR",
+        "Granularität: Vertriebsregion, Produkt, Monat",
+        "Zeitlogik: Bestätigungsdatum im Betrachtungsmonat",
+        "Datengrundlage: Fakt Auftragsposition",
+        "Qualitätsregeln: not_negative",
+        "Stützt Entscheidung: Kapazitätsplanung Fertigung",
+        "Owner: Leitung Vertrieb",
+        "Status: agreed",
+        "Herkunft: „Den Auftragseingang betrachten wir nach Vertriebsregion, Produkt und Monat.“ (Leitung Vertrieb, statement.0004)",
+        "Erzeugt von lotse aus measure.auftragseingang. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Berechnung entspricht der Definition: „Nettowert der im Monat bestätigten Auftragspositionen“.",
+        "Auswertbar je Vertriebsregion, Produkt, Monat.",
+        "Zeitlogik umgesetzt: Bestätigungsdatum im Betrachtungsmonat.",
+        "Qualitätsregel „not_negative“ ist geprüft.",
+        "Fachliche Abnahme durch Leitung Vertrieb."
+      ]
+    },
+    {
+      "key": "measure.auftragsreichweite",
+      "level": "feature",
+      "title": "Kennzahl: Auftragsreichweite",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "measure.auftragsreichweite",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:measure.auftragsreichweite"
+      ],
+      "description": [
+        "Definition (Leitung Controlling): Auftragsbestand in Fertigungsstunden geteilt durch die durchschnittliche Monatskapazität",
+        "Einheit: Monate",
+        "Granularität: Werk, Monat",
+        "Zeitlogik: Stichtag Monatsende",
+        "Datengrundlage: Fakt Auftragsposition, Fakt Kapazität",
+        "Qualitätsregeln: not_negative",
+        "Stützt Entscheidung: Kapazitätsplanung Fertigung",
+        "Owner: Leitung Controlling",
+        "Status: agreed",
+        "Herkunft: „Reichweite ist der Auftragsbestand in Fertigungsstunden geteilt durch die Monatskapazität.“ (Leitung Controlling, statement.0008)",
+        "Erzeugt von lotse aus measure.auftragsreichweite. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Berechnung entspricht der Definition: „Auftragsbestand in Fertigungsstunden geteilt durch die durchschnittliche Monatskapazität“.",
+        "Auswertbar je Werk, Monat.",
+        "Zeitlogik umgesetzt: Stichtag Monatsende.",
+        "Qualitätsregel „not_negative“ ist geprüft.",
+        "Fachliche Abnahme durch Leitung Controlling."
+      ]
+    },
+    {
+      "key": "measure.kapazitaetsauslastung",
+      "level": "feature",
+      "title": "Kennzahl: Kapazitätsauslastung",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "measure.kapazitaetsauslastung",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:measure.kapazitaetsauslastung"
+      ],
+      "description": [
+        "Definition (Leitung Fertigungsplanung): Geplante Fertigungsstunden aus dem Auftragsbestand geteilt durch verfügbare Kapazitätsstunden",
+        "Einheit: %",
+        "Granularität: Werk, Monat",
+        "Zeitlogik: Planmonat",
+        "Datengrundlage: Fakt Auftragsposition, Fakt Kapazität",
+        "Qualitätsregeln: not_negative",
+        "Stützt Entscheidung: Kapazitätsplanung Fertigung",
+        "Owner: Leitung Fertigungsplanung",
+        "Status: agreed",
+        "Herkunft: „Für die Schichtplanung zählt die Auslastung je Werk und Monat.“ (Leitung Fertigungsplanung, statement.0003)",
+        "Erzeugt von lotse aus measure.kapazitaetsauslastung. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Berechnung entspricht der Definition: „Geplante Fertigungsstunden aus dem Auftragsbestand geteilt durch verfügbare Kapazitätsstunden“.",
+        "Auswertbar je Werk, Monat.",
+        "Zeitlogik umgesetzt: Planmonat.",
+        "Qualitätsregel „not_negative“ ist geprüft.",
+        "Fachliche Abnahme durch Leitung Fertigungsplanung."
+      ]
+    },
+    {
+      "key": "measure.liefertreue",
+      "level": "feature",
+      "title": "Kennzahl: Liefertreue",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "measure.liefertreue",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:measure.liefertreue"
+      ],
+      "description": [
+        "Definition (Leitung Vertrieb): Anteil der Lieferpositionen, die spätestens am zugesagten Liefertermin geliefert wurden",
+        "Einheit: %",
+        "Granularität: Kunde, Werk, Monat",
+        "Zeitlogik: Lieferdatum im Betrachtungsmonat",
+        "Datengrundlage: Fakt Lieferung, Fakt Lieferzusage",
+        "Qualitätsregeln: between_0_and_100",
+        "Stützt Entscheidung: Kapazitätsplanung Fertigung",
+        "Owner: Leitung Vertrieb",
+        "Status: draft",
+        "Herkunft: „Liefertreue heißt, dass die Lieferung spätestens am zugesagten Liefertermin rausgeht.“ (Leitung Vertrieb, statement.0006)",
+        "Erzeugt von lotse aus measure.liefertreue. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Berechnung entspricht der Definition: „Anteil der Lieferpositionen, die spätestens am zugesagten Liefertermin geliefert wurden“.",
+        "Auswertbar je Kunde, Werk, Monat.",
+        "Zeitlogik umgesetzt: Lieferdatum im Betrachtungsmonat.",
+        "Qualitätsregel „between_0_and_100“ ist geprüft.",
+        "Fachliche Abnahme durch Leitung Vertrieb."
+      ]
+    },
+    {
+      "key": "question.liefertermin-quelle",
+      "level": "story",
+      "title": "Frage klären: In welchem System wird der zugesagte Liefertermin je Auftragsposition erfasst?",
+      "parent": "measure.liefertreue",
+      "origin": "question.liefertermin-quelle",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:question.liefertermin-quelle"
+      ],
+      "description": [
+        "Frage: In welchem System wird der zugesagte Liefertermin je Auftragsposition erfasst?",
+        "Betrifft: Liefertreue, Fakt Lieferzusage",
+        "Owner: Leitung Vertrieb",
+        "Herkunft: „Den zugesagten Liefertermin kennen wir nicht, der steht nur in den E-Mails des Vertriebs.“ (Leitung Fertigungsplanung, statement.0009)",
+        "Erzeugt von lotse aus question.liefertermin-quelle. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Antwort ist als Aussage erfasst und in der Frage eingetragen (answer, status: answered).",
+        "Betroffene Entitäten sind im Workspace aktualisiert."
+      ]
+    },
+    {
+      "key": "measure.umsatz",
+      "level": "feature",
+      "title": "Kennzahl: Umsatz",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "measure.umsatz",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:measure.umsatz"
+      ],
+      "description": [
+        "Definition (Leitung Controlling): Fakturierter Nettoumsatz",
+        "Einheit: EUR",
+        "Granularität: Kunde, Produkt, Monat",
+        "Zeitlogik: Fakturadatum im Betrachtungsmonat",
+        "Datengrundlage: Fakt Faktura",
+        "Stützt Entscheidung: Kapazitätsplanung Fertigung",
+        "Owner: Leitung Controlling",
+        "Status: agreed",
+        "Herkunft: „Umsatz ist für uns immer der fakturierte Nettoumsatz.“ (Leitung Controlling, statement.0005)",
+        "Erzeugt von lotse aus measure.umsatz. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Berechnung entspricht der Definition: „Fakturierter Nettoumsatz“.",
+        "Auswertbar je Kunde, Produkt, Monat.",
+        "Zeitlogik umgesetzt: Fakturadatum im Betrachtungsmonat.",
+        "Fachliche Abnahme durch Leitung Controlling."
+      ]
+    },
+    {
+      "key": "table.dim_datum",
+      "level": "feature",
+      "title": "Tabelle: Dim Datum",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "table.dim_datum",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:table.dim_datum"
+      ],
+      "description": [
+        "Fabrikkalender aus dem ERP",
+        "Art: Dimensionstabelle",
+        "Quelle: ERP (SAP S/4HANA: KNA1, LIKP, LIPS, MARA, T001W, TFACS, VBAK, VBAP, VBRK, VBRP)",
+        "Spalten: datum (date, Schlüssel); monat (string); quartal (string); jahr (int64)",
+        "Genutzt von Dimensionen: Monat",
+        "Status: agreed",
+        "Erzeugt von lotse aus table.dim_datum. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Gold-Tabelle „Dim Datum“ ist mit allen 4 Spalten bereitgestellt.",
+        "Anbindung an ERP (SAP S/4HANA) ist eingerichtet.",
+        "Schlüssel „datum“ ist eindeutig."
+      ]
+    },
+    {
+      "key": "table.dim_kunde",
+      "level": "feature",
+      "title": "Tabelle: Dim Kunde",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "table.dim_kunde",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:table.dim_kunde"
+      ],
+      "description": [
+        "Art: Dimensionstabelle",
+        "Quelle: CRM (CRM Vertrieb: Accounts, Vertriebsgebiete)",
+        "Quelle: ERP (SAP S/4HANA: KNA1, LIKP, LIPS, MARA, T001W, TFACS, VBAK, VBAP, VBRK, VBRP)",
+        "Spalten: kunde_id (string, Schlüssel); kunde (string); kundengruppe (string); vertriebsgebiet (string); region (string)",
+        "Genutzt von Dimensionen: Kunde, Vertriebsregion",
+        "Status: agreed",
+        "Erzeugt von lotse aus table.dim_kunde. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Gold-Tabelle „Dim Kunde“ ist mit allen 5 Spalten bereitgestellt.",
+        "Anbindung an CRM (CRM Vertrieb) ist eingerichtet.",
+        "Anbindung an ERP (SAP S/4HANA) ist eingerichtet.",
+        "Schlüssel „kunde_id“ ist eindeutig."
+      ]
+    },
+    {
+      "key": "table.dim_produkt",
+      "level": "feature",
+      "title": "Tabelle: Dim Produkt",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "table.dim_produkt",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:table.dim_produkt"
+      ],
+      "description": [
+        "Art: Dimensionstabelle",
+        "Quelle: ERP (SAP S/4HANA: KNA1, LIKP, LIPS, MARA, T001W, TFACS, VBAK, VBAP, VBRK, VBRP)",
+        "Spalten: produkt_id (string, Schlüssel); produkt (string); produktlinie (string)",
+        "Genutzt von Dimensionen: Produkt",
+        "Status: agreed",
+        "Erzeugt von lotse aus table.dim_produkt. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Gold-Tabelle „Dim Produkt“ ist mit allen 3 Spalten bereitgestellt.",
+        "Anbindung an ERP (SAP S/4HANA) ist eingerichtet.",
+        "Schlüssel „produkt_id“ ist eindeutig."
+      ]
+    },
+    {
+      "key": "table.dim_werk",
+      "level": "feature",
+      "title": "Tabelle: Dim Werk",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "table.dim_werk",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:table.dim_werk"
+      ],
+      "description": [
+        "Art: Dimensionstabelle",
+        "Quelle: ERP (SAP S/4HANA: KNA1, LIKP, LIPS, MARA, T001W, TFACS, VBAK, VBAP, VBRK, VBRP)",
+        "Quelle: MES (MES Fertigung: Arbeitsplätze, Kapazitätsplan)",
+        "Spalten: werk_id (string, Schlüssel); werk (string)",
+        "Genutzt von Dimensionen: Werk",
+        "Status: agreed",
+        "Erzeugt von lotse aus table.dim_werk. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Gold-Tabelle „Dim Werk“ ist mit allen 2 Spalten bereitgestellt.",
+        "Anbindung an ERP (SAP S/4HANA) ist eingerichtet.",
+        "Anbindung an MES (MES Fertigung) ist eingerichtet.",
+        "Schlüssel „werk_id“ ist eindeutig."
+      ]
+    },
+    {
+      "key": "table.fact_auftragsposition",
+      "level": "feature",
+      "title": "Tabelle: Fakt Auftragsposition",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "table.fact_auftragsposition",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:table.fact_auftragsposition"
+      ],
+      "description": [
+        "Art: Faktentabelle",
+        "Quelle: ERP (SAP S/4HANA: KNA1, LIKP, LIPS, MARA, T001W, TFACS, VBAK, VBAP, VBRK, VBRP)",
+        "Spalten: auftragsposition_id (string, Schlüssel); kunde_id (string, → Dim Kunde); produkt_id (string, → Dim Produkt); werk_id (string, → Dim Werk); bestaetigt_am (date, → Dim Datum); nettowert (decimal); offener_wert (decimal); fertigungsstunden (decimal)",
+        "Genutzt von Kennzahlen: Auftragsbestand, Auftragseingang, Auftragsreichweite, Kapazitätsauslastung",
+        "Status: agreed",
+        "Erzeugt von lotse aus table.fact_auftragsposition. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Gold-Tabelle „Fakt Auftragsposition“ ist mit allen 8 Spalten bereitgestellt.",
+        "Anbindung an ERP (SAP S/4HANA) ist eingerichtet.",
+        "Schlüssel „auftragsposition_id“ ist eindeutig.",
+        "Spalte „kunde_id“ verweist gültig auf „Dim Kunde“.",
+        "Spalte „produkt_id“ verweist gültig auf „Dim Produkt“.",
+        "Spalte „werk_id“ verweist gültig auf „Dim Werk“.",
+        "Spalte „bestaetigt_am“ verweist gültig auf „Dim Datum“."
+      ]
+    },
+    {
+      "key": "table.fact_faktura",
+      "level": "feature",
+      "title": "Tabelle: Fakt Faktura",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "table.fact_faktura",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:table.fact_faktura"
+      ],
+      "description": [
+        "Art: Faktentabelle",
+        "Quelle: ERP (SAP S/4HANA: KNA1, LIKP, LIPS, MARA, T001W, TFACS, VBAK, VBAP, VBRK, VBRP)",
+        "Spalten: fakturaposition_id (string, Schlüssel); kunde_id (string, → Dim Kunde); produkt_id (string, → Dim Produkt); fakturadatum (date, → Dim Datum); nettoumsatz (decimal)",
+        "Genutzt von Kennzahlen: Umsatz",
+        "Status: agreed",
+        "Erzeugt von lotse aus table.fact_faktura. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Gold-Tabelle „Fakt Faktura“ ist mit allen 5 Spalten bereitgestellt.",
+        "Anbindung an ERP (SAP S/4HANA) ist eingerichtet.",
+        "Schlüssel „fakturaposition_id“ ist eindeutig.",
+        "Spalte „kunde_id“ verweist gültig auf „Dim Kunde“.",
+        "Spalte „produkt_id“ verweist gültig auf „Dim Produkt“.",
+        "Spalte „fakturadatum“ verweist gültig auf „Dim Datum“."
+      ]
+    },
+    {
+      "key": "table.fact_kapazitaet",
+      "level": "feature",
+      "title": "Tabelle: Fakt Kapazität",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "table.fact_kapazitaet",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:table.fact_kapazitaet"
+      ],
+      "description": [
+        "Art: Faktentabelle",
+        "Quelle: MES (MES Fertigung: Arbeitsplätze, Kapazitätsplan)",
+        "Spalten: werk_id (string, → Dim Werk); monat (date, → Dim Datum); verfuegbare_stunden (decimal)",
+        "Genutzt von Kennzahlen: Auftragsreichweite, Kapazitätsauslastung",
+        "Status: agreed",
+        "Erzeugt von lotse aus table.fact_kapazitaet. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Gold-Tabelle „Fakt Kapazität“ ist mit allen 3 Spalten bereitgestellt.",
+        "Anbindung an MES (MES Fertigung) ist eingerichtet.",
+        "Spalte „werk_id“ verweist gültig auf „Dim Werk“.",
+        "Spalte „monat“ verweist gültig auf „Dim Datum“."
+      ]
+    },
+    {
+      "key": "table.fact_lieferung",
+      "level": "feature",
+      "title": "Tabelle: Fakt Lieferung",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "table.fact_lieferung",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:table.fact_lieferung"
+      ],
+      "description": [
+        "Art: Faktentabelle",
+        "Quelle: ERP (SAP S/4HANA: KNA1, LIKP, LIPS, MARA, T001W, TFACS, VBAK, VBAP, VBRK, VBRP)",
+        "Spalten: lieferposition_id (string, Schlüssel); auftragsposition_id (string); kunde_id (string, → Dim Kunde); werk_id (string, → Dim Werk); lieferdatum (date, → Dim Datum)",
+        "Genutzt von Kennzahlen: Liefertreue",
+        "Status: agreed",
+        "Erzeugt von lotse aus table.fact_lieferung. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Gold-Tabelle „Fakt Lieferung“ ist mit allen 5 Spalten bereitgestellt.",
+        "Anbindung an ERP (SAP S/4HANA) ist eingerichtet.",
+        "Schlüssel „lieferposition_id“ ist eindeutig.",
+        "Spalte „kunde_id“ verweist gültig auf „Dim Kunde“.",
+        "Spalte „werk_id“ verweist gültig auf „Dim Werk“.",
+        "Spalte „lieferdatum“ verweist gültig auf „Dim Datum“."
+      ]
+    },
+    {
+      "key": "table.fact_lieferzusage",
+      "level": "feature",
+      "title": "Tabelle: Fakt Lieferzusage",
+      "parent": "product.auftragsbestand-cockpit",
+      "origin": "table.fact_lieferzusage",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:table.fact_lieferzusage"
+      ],
+      "description": [
+        "Zugesagter Liefertermin je Auftragsposition",
+        "Art: Faktentabelle",
+        "Quelle: offen",
+        "Spalten: auftragsposition_id (string, Schlüssel); zugesagt_am (date, → Dim Datum)",
+        "Genutzt von Kennzahlen: Liefertreue",
+        "Status: draft",
+        "Erzeugt von lotse aus table.fact_lieferzusage. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Gold-Tabelle „Fakt Lieferzusage“ ist mit allen 2 Spalten bereitgestellt.",
+        "Quellsystem ist geklärt und angebunden.",
+        "Schlüssel „auftragsposition_id“ ist eindeutig.",
+        "Spalte „zugesagt_am“ verweist gültig auf „Dim Datum“."
+      ]
+    },
+    {
+      "key": "finding:table_without_source:table.fact_lieferzusage",
+      "level": "story",
+      "title": "Quelle für „Fakt Lieferzusage“ klären",
+      "parent": "table.fact_lieferzusage",
+      "origin": "table.fact_lieferzusage",
+      "tags": [
+        "lotse",
+        "lotse-ws:nordwind",
+        "lotse:finding:table_without_source:table.fact_lieferzusage"
+      ],
+      "description": [
+        "Aus welchem Quellsystem kommen die Daten für „Fakt Lieferzusage“?",
+        "Befund: [gap] table_without_source: Tabelle „Fakt Lieferzusage“ hat keine Quelle (from_sources fehlt)",
+        "Betrifft: Fakt Lieferzusage (table.fact_lieferzusage)",
+        "Erzeugt von lotse aus table.fact_lieferzusage. Änderungen bitte im Workspace, nicht in ADO."
+      ],
+      "acceptance_criteria": [
+        "Antwort ist als Aussage (statement) im Workspace erfasst.",
+        "lotse check meldet table_without_source für table.fact_lieferzusage nicht mehr."
+      ]
+    }
+  ]
+}

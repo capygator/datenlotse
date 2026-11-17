@@ -1,0 +1,36 @@
+/// lotse: table.fact_kapazitaet (fact, Status: agreed)
+table 'Fakt Kapazität'
+	lineageTag: bb6f6f68-eac1-5d9c-8934-eb899e6aac1f
+
+	column werk_id
+		dataType: string
+		isHidden
+		lineageTag: d10be75b-af7a-5414-a93e-3d62c48f872c
+		summarizeBy: none
+		sourceColumn: werk_id
+
+	column monat
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: da189586-2724-5f73-9cba-4c6873db9574
+		summarizeBy: none
+		sourceColumn: monat
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column verfuegbare_stunden
+		dataType: decimal
+		lineageTag: 3e5ed790-08f3-5668-b44e-2080b7019ae3
+		summarizeBy: sum
+		sourceColumn: verfuegbare_stunden
+
+	partition 'Fakt Kapazität' = m
+		mode: import
+		source =
+				let
+					// Platzhalter aus lotse (table.fact_kapazitaet), Quelle: MES (MES Fertigung)
+					Quelle = #table(type table [werk_id = text, monat = date, verfuegbare_stunden = Currency.Type], {})
+				in
+					Quelle
+

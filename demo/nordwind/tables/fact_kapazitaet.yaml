@@ -1,0 +1,14 @@
+id: table.fact_kapazitaet
+name: Fakt Kapazität
+status: agreed
+kind: fact
+from_sources: [source.mes]
+columns:
+  - name: werk_id
+    type: string
+    references: table.dim_werk
+  - name: monat
+    type: date
+    references: table.dim_datum
+  - name: verfuegbare_stunden
+    type: decimal

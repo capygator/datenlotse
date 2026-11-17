@@ -1,0 +1,373 @@
+{
+  "schema_version": 1,
+  "diagram_type": "erd",
+  "meta": {
+    "title": "Nordwind Maschinenbau GmbH: Datenmodell",
+    "locale": "de",
+    "subtitle": "Gold-Tabellen mit Spalten und Beziehungen aus columns[].references (Fremdschlüssel → Schlüsselspalte der Zieltabelle).",
+    "output": "model.html",
+    "quality_profile": "standard"
+  },
+  "layout": {
+    "mode": "grid"
+  },
+  "entities": [
+    {
+      "id": "dim_datum",
+      "label": "Dim Datum",
+      "row": 0,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "datum",
+          "type": "date",
+          "key": "pk"
+        },
+        {
+          "name": "monat",
+          "type": "string"
+        },
+        {
+          "name": "quartal",
+          "type": "string"
+        },
+        {
+          "name": "jahr",
+          "type": "int64"
+        }
+      ]
+    },
+    {
+      "id": "dim_kunde",
+      "label": "Dim Kunde",
+      "row": 0,
+      "col": 1,
+      "attributes": [
+        {
+          "name": "kunde_id",
+          "type": "string",
+          "key": "pk"
+        },
+        {
+          "name": "kunde",
+          "type": "string"
+        },
+        {
+          "name": "kundengruppe",
+          "type": "string"
+        },
+        {
+          "name": "vertriebsgebiet",
+          "type": "string"
+        },
+        {
+          "name": "region",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "dim_produkt",
+      "label": "Dim Produkt",
+      "row": 0,
+      "col": 2,
+      "attributes": [
+        {
+          "name": "produkt_id",
+          "type": "string",
+          "key": "pk"
+        },
+        {
+          "name": "produkt",
+          "type": "string"
+        },
+        {
+          "name": "produktlinie",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "dim_werk",
+      "label": "Dim Werk",
+      "row": 0,
+      "col": 3,
+      "attributes": [
+        {
+          "name": "werk_id",
+          "type": "string",
+          "key": "pk"
+        },
+        {
+          "name": "werk",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "fact_auftragsposition",
+      "label": "Fakt Auftragsposition",
+      "row": 1,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "auftragsposition_id",
+          "type": "string",
+          "key": "pk"
+        },
+        {
+          "name": "kunde_id",
+          "type": "string",
+          "key": "fk",
+          "references": "dim_kunde.kunde_id"
+        },
+        {
+          "name": "produkt_id",
+          "type": "string",
+          "key": "fk",
+          "references": "dim_produkt.produkt_id"
+        },
+        {
+          "name": "werk_id",
+          "type": "string",
+          "key": "fk",
+          "references": "dim_werk.werk_id"
+        },
+        {
+          "name": "bestaetigt_am",
+          "type": "date",
+          "key": "fk",
+          "references": "dim_datum.datum"
+        },
+        {
+          "name": "nettowert",
+          "type": "decimal"
+        },
+        {
+          "name": "offener_wert",
+          "type": "decimal"
+        },
+        {
+          "name": "fertigungsstunden",
+          "type": "decimal"
+        }
+      ]
+    },
+    {
+      "id": "fact_faktura",
+      "label": "Fakt Faktura",
+      "row": 1,
+      "col": 1,
+      "attributes": [
+        {
+          "name": "fakturaposition_id",
+          "type": "string",
+          "key": "pk"
+        },
+        {
+          "name": "kunde_id",
+          "type": "string",
+          "key": "fk",
+          "references": "dim_kunde.kunde_id"
+        },
+        {
+          "name": "produkt_id",
+          "type": "string",
+          "key": "fk",
+          "references": "dim_produkt.produkt_id"
+        },
+        {
+          "name": "fakturadatum",
+          "type": "date",
+          "key": "fk",
+          "references": "dim_datum.datum"
+        },
+        {
+          "name": "nettoumsatz",
+          "type": "decimal"
+        }
+      ]
+    },
+    {
+      "id": "fact_kapazitaet",
+      "label": "Fakt Kapazität",
+      "row": 1,
+      "col": 2,
+      "attributes": [
+        {
+          "name": "werk_id",
+          "type": "string",
+          "key": "fk",
+          "references": "dim_werk.werk_id"
+        },
+        {
+          "name": "monat",
+          "type": "date",
+          "key": "fk",
+          "references": "dim_datum.datum"
+        },
+        {
+          "name": "verfuegbare_stunden",
+          "type": "decimal"
+        }
+      ]
+    },
+    {
+      "id": "fact_lieferung",
+      "label": "Fakt Lieferung",
+      "row": 1,
+      "col": 3,
+      "attributes": [
+        {
+          "name": "lieferposition_id",
+          "type": "string",
+          "key": "pk"
+        },
+        {
+          "name": "auftragsposition_id",
+          "type": "string"
+        },
+        {
+          "name": "kunde_id",
+          "type": "string",
+          "key": "fk",
+          "references": "dim_kunde.kunde_id"
+        },
+        {
+          "name": "werk_id",
+          "type": "string",
+          "key": "fk",
+          "references": "dim_werk.werk_id"
+        },
+        {
+          "name": "lieferdatum",
+          "type": "date",
+          "key": "fk",
+          "references": "dim_datum.datum"
+        }
+      ]
+    },
+    {
+      "id": "fact_lieferzusage",
+      "label": "Fakt Lieferzusage",
+      "sublabel": "Entwurf · Lücke",
+      "row": 1,
+      "col": 4,
+      "attributes": [
+        {
+          "name": "auftragsposition_id",
+          "type": "string",
+          "key": "pk"
+        },
+        {
+          "name": "zugesagt_am",
+          "type": "date",
+          "key": "fk",
+          "references": "dim_datum.datum"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "from": "fact_auftragsposition",
+      "to": "dim_datum",
+      "label": "bestaetigt_am",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_auftragsposition",
+      "to": "dim_kunde",
+      "label": "kunde_id",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_auftragsposition",
+      "to": "dim_produkt",
+      "label": "produkt_id",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_auftragsposition",
+      "to": "dim_werk",
+      "label": "werk_id",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_faktura",
+      "to": "dim_datum",
+      "label": "fakturadatum",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_faktura",
+      "to": "dim_kunde",
+      "label": "kunde_id",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_faktura",
+      "to": "dim_produkt",
+      "label": "produkt_id",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_kapazitaet",
+      "to": "dim_datum",
+      "label": "monat",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_kapazitaet",
+      "to": "dim_werk",
+      "label": "werk_id",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_lieferung",
+      "to": "dim_datum",
+      "label": "lieferdatum",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_lieferung",
+      "to": "dim_kunde",
+      "label": "kunde_id",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_lieferung",
+      "to": "dim_werk",
+      "label": "werk_id",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    },
+    {
+      "from": "fact_lieferzusage",
+      "to": "dim_datum",
+      "label": "zugesagt_am",
+      "fromCardinality": "many",
+      "toCardinality": "one"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Offene Befunde",
+      "items": [
+        "Fakt Lieferzusage: Lücke"
+      ]
+    }
+  ]
+}

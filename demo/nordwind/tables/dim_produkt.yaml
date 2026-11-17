@@ -1,0 +1,13 @@
+id: table.dim_produkt
+name: Dim Produkt
+status: agreed
+kind: dimension
+from_sources: [source.erp]
+columns:
+  - name: produkt_id
+    type: string
+    key: true
+  - name: produkt
+    type: string
+  - name: produktlinie
+    type: string

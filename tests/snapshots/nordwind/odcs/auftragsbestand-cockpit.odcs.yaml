@@ -1,0 +1,581 @@
+# Generiert von `lotse gen odcs` aus Workspace 'Nordwind Maschinenbau GmbH'.
+# Nicht von Hand bearbeiten: Änderungen gehören in die YAML-Dateien des Workspaces.
+apiVersion: v3.1.0
+kind: DataContract
+id: auftragsbestand-cockpit
+name: Auftragsbestand-Cockpit
+version: 0.1.0
+status: proposed
+domain: Nordwind Maschinenbau GmbH
+tags:
+- lotse
+- semantic_model
+description:
+  purpose: 'Kapazitätsplanung Fertigung: Monatliche Festlegung des Schichtmodells je Werk'
+  usage: 'Stützt die Entscheidung(en): Kapazitätsplanung Fertigung'
+  limitations: 'Offene Befunde: gap · table.fact_lieferzusage: Tabelle „Fakt Lieferzusage“ hat keine Quelle
+    (from_sources fehlt)'
+schema:
+- id: dim_datum
+  name: dim_datum
+  physicalName: dim_datum
+  physicalType: table
+  businessName: Dim Datum
+  description: Fabrikkalender aus dem ERP
+  logicalType: object
+  dataGranularityDescription: Eine Zeile je datum
+  tags:
+  - dimension
+  properties:
+  - id: datum
+    name: datum
+    logicalType: date
+    physicalType: date
+    primaryKey: true
+    primaryKeyPosition: 1
+    required: true
+  - id: monat
+    name: monat
+    logicalType: string
+    physicalType: string
+  - id: quartal
+    name: quartal
+    logicalType: string
+    physicalType: string
+  - id: jahr
+    name: jahr
+    logicalType: integer
+    physicalType: int64
+  customProperties:
+  - property: lotseId
+    value: table.dim_datum
+  - property: status
+    value: agreed
+  - property: sources
+    value:
+    - id: source.erp
+      name: ERP
+      system: SAP S/4HANA
+- id: dim_kunde
+  name: dim_kunde
+  physicalName: dim_kunde
+  physicalType: table
+  businessName: Dim Kunde
+  logicalType: object
+  dataGranularityDescription: Eine Zeile je kunde_id
+  tags:
+  - dimension
+  properties:
+  - id: kunde_id
+    name: kunde_id
+    logicalType: string
+    physicalType: string
+    primaryKey: true
+    primaryKeyPosition: 1
+    required: true
+  - id: kunde
+    name: kunde
+    logicalType: string
+    physicalType: string
+  - id: kundengruppe
+    name: kundengruppe
+    logicalType: string
+    physicalType: string
+  - id: vertriebsgebiet
+    name: vertriebsgebiet
+    logicalType: string
+    physicalType: string
+  - id: region
+    name: region
+    logicalType: string
+    physicalType: string
+  customProperties:
+  - property: lotseId
+    value: table.dim_kunde
+  - property: status
+    value: agreed
+  - property: sources
+    value:
+    - id: source.crm
+      name: CRM
+      system: CRM Vertrieb
+    - id: source.erp
+      name: ERP
+      system: SAP S/4HANA
+- id: dim_produkt
+  name: dim_produkt
+  physicalName: dim_produkt
+  physicalType: table
+  businessName: Dim Produkt
+  logicalType: object
+  dataGranularityDescription: Eine Zeile je produkt_id
+  tags:
+  - dimension
+  properties:
+  - id: produkt_id
+    name: produkt_id
+    logicalType: string
+    physicalType: string
+    primaryKey: true
+    primaryKeyPosition: 1
+    required: true
+  - id: produkt
+    name: produkt
+    logicalType: string
+    physicalType: string
+  - id: produktlinie
+    name: produktlinie
+    logicalType: string
+    physicalType: string
+  customProperties:
+  - property: lotseId
+    value: table.dim_produkt
+  - property: status
+    value: agreed
+  - property: sources
+    value:
+    - id: source.erp
+      name: ERP
+      system: SAP S/4HANA
+- id: dim_werk
+  name: dim_werk
+  physicalName: dim_werk
+  physicalType: table
+  businessName: Dim Werk
+  logicalType: object
+  dataGranularityDescription: Eine Zeile je werk_id
+  tags:
+  - dimension
+  properties:
+  - id: werk_id
+    name: werk_id
+    logicalType: string
+    physicalType: string
+    primaryKey: true
+    primaryKeyPosition: 1
+    required: true
+  - id: werk
+    name: werk
+    logicalType: string
+    physicalType: string
+  customProperties:
+  - property: lotseId
+    value: table.dim_werk
+  - property: status
+    value: agreed
+  - property: sources
+    value:
+    - id: source.erp
+      name: ERP
+      system: SAP S/4HANA
+    - id: source.mes
+      name: MES
+      system: MES Fertigung
+- id: fact_auftragsposition
+  name: fact_auftragsposition
+  physicalName: fact_auftragsposition
+  physicalType: table
+  businessName: Fakt Auftragsposition
+  logicalType: object
+  dataGranularityDescription: Eine Zeile je auftragsposition_id
+  tags:
+  - fact
+  properties:
+  - id: auftragsposition_id
+    name: auftragsposition_id
+    logicalType: string
+    physicalType: string
+    primaryKey: true
+    primaryKeyPosition: 1
+    required: true
+  - id: kunde_id
+    name: kunde_id
+    logicalType: string
+    physicalType: string
+    relationships:
+    - type: foreignKey
+      to: dim_kunde.kunde_id
+  - id: produkt_id
+    name: produkt_id
+    logicalType: string
+    physicalType: string
+    relationships:
+    - type: foreignKey
+      to: dim_produkt.produkt_id
+  - id: werk_id
+    name: werk_id
+    logicalType: string
+    physicalType: string
+    relationships:
+    - type: foreignKey
+      to: dim_werk.werk_id
+  - id: bestaetigt_am
+    name: bestaetigt_am
+    logicalType: date
+    physicalType: date
+    relationships:
+    - type: foreignKey
+      to: dim_datum.datum
+  - id: nettowert
+    name: nettowert
+    logicalType: number
+    physicalType: decimal
+  - id: offener_wert
+    name: offener_wert
+    logicalType: number
+    physicalType: decimal
+  - id: fertigungsstunden
+    name: fertigungsstunden
+    logicalType: number
+    physicalType: decimal
+  quality:
+  - id: auftragsbestand-not_negative
+    name: not_negative
+    type: text
+    description: 'Kennzahl Auftragsbestand: Regel not_negative'
+    customProperties:
+    - property: measure
+      value: measure.auftragsbestand
+  - id: auftragseingang-not_negative
+    name: not_negative
+    type: text
+    description: 'Kennzahl Auftragseingang: Regel not_negative'
+    customProperties:
+    - property: measure
+      value: measure.auftragseingang
+  - id: auftragsreichweite-not_negative
+    name: not_negative
+    type: text
+    description: 'Kennzahl Auftragsreichweite: Regel not_negative'
+    customProperties:
+    - property: measure
+      value: measure.auftragsreichweite
+  - id: kapazitaetsauslastung-not_negative
+    name: not_negative
+    type: text
+    description: 'Kennzahl Kapazitätsauslastung: Regel not_negative'
+    customProperties:
+    - property: measure
+      value: measure.kapazitaetsauslastung
+  customProperties:
+  - property: lotseId
+    value: table.fact_auftragsposition
+  - property: status
+    value: agreed
+  - property: sources
+    value:
+    - id: source.erp
+      name: ERP
+      system: SAP S/4HANA
+- id: fact_faktura
+  name: fact_faktura
+  physicalName: fact_faktura
+  physicalType: table
+  businessName: Fakt Faktura
+  logicalType: object
+  dataGranularityDescription: Eine Zeile je fakturaposition_id
+  tags:
+  - fact
+  properties:
+  - id: fakturaposition_id
+    name: fakturaposition_id
+    logicalType: string
+    physicalType: string
+    primaryKey: true
+    primaryKeyPosition: 1
+    required: true
+  - id: kunde_id
+    name: kunde_id
+    logicalType: string
+    physicalType: string
+    relationships:
+    - type: foreignKey
+      to: dim_kunde.kunde_id
+  - id: produkt_id
+    name: produkt_id
+    logicalType: string
+    physicalType: string
+    relationships:
+    - type: foreignKey
+      to: dim_produkt.produkt_id
+  - id: fakturadatum
+    name: fakturadatum
+    logicalType: date
+    physicalType: date
+    relationships:
+    - type: foreignKey
+      to: dim_datum.datum
+  - id: nettoumsatz
+    name: nettoumsatz
+    logicalType: number
+    physicalType: decimal
+  customProperties:
+  - property: lotseId
+    value: table.fact_faktura
+  - property: status
+    value: agreed
+  - property: sources
+    value:
+    - id: source.erp
+      name: ERP
+      system: SAP S/4HANA
+- id: fact_kapazitaet
+  name: fact_kapazitaet
+  physicalName: fact_kapazitaet
+  physicalType: table
+  businessName: Fakt Kapazität
+  logicalType: object
+  tags:
+  - fact
+  properties:
+  - id: werk_id
+    name: werk_id
+    logicalType: string
+    physicalType: string
+    relationships:
+    - type: foreignKey
+      to: dim_werk.werk_id
+  - id: monat
+    name: monat
+    logicalType: date
+    physicalType: date
+    relationships:
+    - type: foreignKey
+      to: dim_datum.datum
+  - id: verfuegbare_stunden
+    name: verfuegbare_stunden
+    logicalType: number
+    physicalType: decimal
+  customProperties:
+  - property: lotseId
+    value: table.fact_kapazitaet
+  - property: status
+    value: agreed
+  - property: sources
+    value:
+    - id: source.mes
+      name: MES
+      system: MES Fertigung
+- id: fact_lieferung
+  name: fact_lieferung
+  physicalName: fact_lieferung
+  physicalType: table
+  businessName: Fakt Lieferung
+  logicalType: object
+  dataGranularityDescription: Eine Zeile je lieferposition_id
+  tags:
+  - fact
+  properties:
+  - id: lieferposition_id
+    name: lieferposition_id
+    logicalType: string
+    physicalType: string
+    primaryKey: true
+    primaryKeyPosition: 1
+    required: true
+  - id: auftragsposition_id
+    name: auftragsposition_id
+    logicalType: string
+    physicalType: string
+  - id: kunde_id
+    name: kunde_id
+    logicalType: string
+    physicalType: string
+    relationships:
+    - type: foreignKey
+      to: dim_kunde.kunde_id
+  - id: werk_id
+    name: werk_id
+    logicalType: string
+    physicalType: string
+    relationships:
+    - type: foreignKey
+      to: dim_werk.werk_id
+  - id: lieferdatum
+    name: lieferdatum
+    logicalType: date
+    physicalType: date
+    relationships:
+    - type: foreignKey
+      to: dim_datum.datum
+  quality:
+  - id: liefertreue-between_0_and_100
+    name: between_0_and_100
+    type: text
+    description: 'Kennzahl Liefertreue: Regel between_0_and_100'
+    customProperties:
+    - property: measure
+      value: measure.liefertreue
+  customProperties:
+  - property: lotseId
+    value: table.fact_lieferung
+  - property: status
+    value: agreed
+  - property: sources
+    value:
+    - id: source.erp
+      name: ERP
+      system: SAP S/4HANA
+- id: fact_lieferzusage
+  name: fact_lieferzusage
+  physicalName: fact_lieferzusage
+  physicalType: table
+  businessName: Fakt Lieferzusage
+  description: Zugesagter Liefertermin je Auftragsposition
+  logicalType: object
+  dataGranularityDescription: Eine Zeile je auftragsposition_id
+  tags:
+  - fact
+  properties:
+  - id: auftragsposition_id
+    name: auftragsposition_id
+    logicalType: string
+    physicalType: string
+    primaryKey: true
+    primaryKeyPosition: 1
+    required: true
+  - id: zugesagt_am
+    name: zugesagt_am
+    logicalType: date
+    physicalType: date
+    relationships:
+    - type: foreignKey
+      to: dim_datum.datum
+  customProperties:
+  - property: lotseId
+    value: table.fact_lieferzusage
+  - property: status
+    value: draft
+team:
+  name: Nordwind Maschinenbau GmbH
+  members:
+  - username: controlling-leitung
+    name: Leitung Controlling
+    description: Kennzahlen-Owner
+    role: Produkt-Owner, Owner Auftragsbestand, Owner Auftragsreichweite, Owner Umsatz, Definition Auftragsreichweite,
+      Definition Umsatz
+  - username: vertrieb-leitung
+    name: Leitung Vertrieb
+    description: Fachbereich
+    role: Owner Auftragseingang, Owner Liefertreue, Definition Auftragsbestand, Definition Auftragseingang,
+      Definition Liefertreue
+  - username: fertigung-leitung
+    name: Leitung Fertigungsplanung
+    description: Fachbereich
+    role: Owner Kapazitätsauslastung, Definition Kapazitätsauslastung
+customProperties:
+- property: lotseId
+  value: product.auftragsbestand-cockpit
+- property: decisions
+  value:
+  - id: decision.kapazitaetsplanung
+    name: Kapazitätsplanung Fertigung
+- property: measures
+  value:
+  - id: measure.auftragsbestand
+    name: Auftragsbestand
+    status: agreed
+    owner: Leitung Controlling
+    unit: EUR
+    definitions:
+    - by: Leitung Vertrieb
+      text: Summe aller bestätigten, noch nicht gelieferten Auftragspositionen
+      statement: statement.0010
+    timeLogic: Stichtag Monatsende
+    grain:
+    - Kunde
+    - Produkt
+    - Monat
+    fromTables:
+    - fact_auftragsposition
+    quality:
+    - not_negative
+  - id: measure.auftragseingang
+    name: Auftragseingang
+    status: agreed
+    owner: Leitung Vertrieb
+    unit: EUR
+    definitions:
+    - by: Leitung Vertrieb
+      text: Nettowert der im Monat bestätigten Auftragspositionen
+      statement: statement.0004
+    timeLogic: Bestätigungsdatum im Betrachtungsmonat
+    grain:
+    - Vertriebsregion
+    - Produkt
+    - Monat
+    fromTables:
+    - fact_auftragsposition
+    quality:
+    - not_negative
+  - id: measure.auftragsreichweite
+    name: Auftragsreichweite
+    status: agreed
+    owner: Leitung Controlling
+    unit: Monate
+    definitions:
+    - by: Leitung Controlling
+      text: Auftragsbestand in Fertigungsstunden geteilt durch die durchschnittliche Monatskapazität
+      statement: statement.0008
+    timeLogic: Stichtag Monatsende
+    grain:
+    - Werk
+    - Monat
+    fromTables:
+    - fact_auftragsposition
+    - fact_kapazitaet
+    quality:
+    - not_negative
+  - id: measure.kapazitaetsauslastung
+    name: Kapazitätsauslastung
+    status: agreed
+    owner: Leitung Fertigungsplanung
+    unit: '%'
+    definitions:
+    - by: Leitung Fertigungsplanung
+      text: Geplante Fertigungsstunden aus dem Auftragsbestand geteilt durch verfügbare Kapazitätsstunden
+      statement: statement.0003
+    timeLogic: Planmonat
+    grain:
+    - Werk
+    - Monat
+    fromTables:
+    - fact_auftragsposition
+    - fact_kapazitaet
+    quality:
+    - not_negative
+  - id: measure.liefertreue
+    name: Liefertreue
+    status: draft
+    owner: Leitung Vertrieb
+    unit: '%'
+    definitions:
+    - by: Leitung Vertrieb
+      text: Anteil der Lieferpositionen, die spätestens am zugesagten Liefertermin geliefert wurden
+      statement: statement.0006
+    timeLogic: Lieferdatum im Betrachtungsmonat
+    grain:
+    - Kunde
+    - Werk
+    - Monat
+    fromTables:
+    - fact_lieferung
+    - fact_lieferzusage
+    quality:
+    - between_0_and_100
+  - id: measure.umsatz
+    name: Umsatz
+    status: agreed
+    owner: Leitung Controlling
+    unit: EUR
+    definitions:
+    - by: Leitung Controlling
+      text: Fakturierter Nettoumsatz
+      statement: statement.0005
+    timeLogic: Fakturadatum im Betrachtungsmonat
+    grain:
+    - Kunde
+    - Produkt
+    - Monat
+    fromTables:
+    - fact_faktura

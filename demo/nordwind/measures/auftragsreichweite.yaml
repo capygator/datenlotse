@@ -1,0 +1,15 @@
+id: measure.auftragsreichweite
+name: Auftragsreichweite
+status: agreed
+owner: stakeholder.controlling-leitung
+unit: Monate
+grain: [dimension.werk, dimension.monat]
+definitions:
+  - by: stakeholder.controlling-leitung
+    text: Auftragsbestand in Fertigungsstunden geteilt durch die durchschnittliche Monatskapazität
+    statement: statement.0008
+time_logic: Stichtag Monatsende
+serves: [decision.kapazitaetsplanung]
+from_tables: [table.fact_auftragsposition, table.fact_kapazitaet]
+quality:
+  - rule: not_negative

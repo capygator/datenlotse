@@ -1,0 +1,49 @@
+%% lotse render mermaid --view lineage
+%% Nordwind Maschinenbau GmbH: Lineage
+%% Datenfluss Quelle → Tabelle → Kennzahlen → Datenprodukt → Entscheidung. Kennzahlen sind je Owner zu einem Block zusammengefasst, damit das Bild bei rund 8 bis 12 Kernknoten bleibt.
+flowchart LR
+    subgraph lane0["Quelle"]
+        source-erp["ERP"]
+        source-mes["MES"]
+    end
+    subgraph lane1["Tabelle"]
+        table-fact_auftragsposition["Fakt Auftragsposition"]
+        table-fact_faktura["Fakt Faktura"]
+        table-fact_kapazitaet["Fakt Kapazität"]
+        table-fact_lieferung["Fakt Lieferung"]
+        table-fact_lieferzusage["Fakt Lieferzusage<br/>[Entwurf · Lücke]"]
+    end
+    subgraph lane2["Kennzahl"]
+        block-controlling-leitung["Leitung Controlling<br/>Auftragsbestand, Auftragsreichweite, Umsatz"]
+        block-fertigung-leitung["Leitung Fertigungsplanung<br/>Kapazitätsauslastung"]
+        block-vertrieb-leitung["Leitung Vertrieb<br/>Auftragseingang, Liefertreue<br/>[Entwurf]"]
+    end
+    subgraph lane3["Datenprodukt"]
+        product-auftragsbestand-cockpit["Auftragsbestand-Cockpit"]
+    end
+    subgraph lane4["Entscheidung"]
+        decision-kapazitaetsplanung["Kapazitätsplanung Fertigung"]
+    end
+    block-controlling-leitung -->|"Kennzahlen"| product-auftragsbestand-cockpit
+    block-fertigung-leitung -->|"Kennzahlen"| product-auftragsbestand-cockpit
+    block-vertrieb-leitung -->|"Kennzahlen"| product-auftragsbestand-cockpit
+    product-auftragsbestand-cockpit -->|"stützt"| decision-kapazitaetsplanung
+    source-erp -->|"liefert"| table-fact_auftragsposition
+    source-erp -->|"liefert"| table-fact_faktura
+    source-erp -->|"liefert"| table-fact_lieferung
+    source-mes -->|"liefert"| table-fact_kapazitaet
+    table-fact_auftragsposition -->|"speist"| block-controlling-leitung
+    table-fact_auftragsposition -->|"speist"| block-fertigung-leitung
+    table-fact_auftragsposition -->|"speist"| block-vertrieb-leitung
+    table-fact_faktura -->|"speist"| block-controlling-leitung
+    table-fact_kapazitaet -->|"speist"| block-controlling-leitung
+    table-fact_kapazitaet -->|"speist"| block-fertigung-leitung
+    table-fact_lieferung -->|"speist"| block-vertrieb-leitung
+    table-fact_lieferzusage -->|"speist"| block-vertrieb-leitung
+    classDef agreed fill:#e8f5e9,stroke:#2e7d32,color:#1b1b1b
+    classDef draft fill:#fff8e1,stroke:#f9a825,color:#1b1b1b
+    classDef conflict fill:#ffebee,stroke:#c62828,color:#1b1b1b
+    classDef finding stroke-width:3px,stroke-dasharray:4 3
+    class source-erp,source-mes,table-fact_auftragsposition,table-fact_faktura,table-fact_kapazitaet,table-fact_lieferung,block-controlling-leitung,block-fertigung-leitung,product-auftragsbestand-cockpit,decision-kapazitaetsplanung agreed
+    class table-fact_lieferzusage,block-vertrieb-leitung draft
+    class table-fact_lieferzusage finding

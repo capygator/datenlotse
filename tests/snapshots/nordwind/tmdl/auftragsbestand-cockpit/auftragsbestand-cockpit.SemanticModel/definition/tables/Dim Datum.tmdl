@@ -1,0 +1,42 @@
+/// Fabrikkalender aus dem ERP
+/// lotse: table.dim_datum (dimension, Status: agreed)
+table 'Dim Datum'
+	lineageTag: badbefd7-24da-5c6c-982f-1562db059338
+
+	column datum
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: 5e8a72d8-8d9d-58b7-83cf-71d9d797e9cf
+		summarizeBy: none
+		sourceColumn: datum
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column monat
+		dataType: string
+		lineageTag: 7bad990e-c784-5590-ad9f-08b2c4b677a7
+		summarizeBy: none
+		sourceColumn: monat
+
+	column quartal
+		dataType: string
+		lineageTag: 34aad45b-bc79-518c-85f3-ac7772225232
+		summarizeBy: none
+		sourceColumn: quartal
+
+	column jahr
+		dataType: int64
+		lineageTag: 6c287f46-6cee-50ca-8ba0-6c08206a4daf
+		summarizeBy: none
+		sourceColumn: jahr
+
+	partition 'Dim Datum' = m
+		mode: import
+		source =
+				let
+					// Platzhalter aus lotse (table.dim_datum), Quelle: ERP (SAP S/4HANA)
+					Quelle = #table(type table [datum = date, monat = text, quartal = text, jahr = Int64.Type], {})
+				in
+					Quelle
+

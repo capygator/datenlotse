@@ -1,0 +1,12 @@
+id: table.fact_lieferzusage
+name: Fakt Lieferzusage
+description: Zugesagter Liefertermin je Auftragsposition
+status: draft
+kind: fact
+columns:
+  - name: auftragsposition_id
+    type: string
+    key: true
+  - name: zugesagt_am
+    type: date
+    references: table.dim_datum

@@ -1,0 +1,16 @@
+id: measure.auftragsbestand
+name: Auftragsbestand
+status: agreed
+owner: stakeholder.controlling-leitung
+statement: statement.0012
+unit: EUR
+grain: [dimension.kunde, dimension.produkt, dimension.monat]
+definitions:
+  - by: stakeholder.vertrieb-leitung
+    text: Summe aller bestätigten, noch nicht gelieferten Auftragspositionen
+    statement: statement.0010
+time_logic: Stichtag Monatsende
+serves: [decision.kapazitaetsplanung]
+from_tables: [table.fact_auftragsposition]
+quality:
+  - rule: not_negative

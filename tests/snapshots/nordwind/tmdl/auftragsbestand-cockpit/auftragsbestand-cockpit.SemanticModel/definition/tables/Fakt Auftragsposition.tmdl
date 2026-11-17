@@ -1,0 +1,109 @@
+/// lotse: table.fact_auftragsposition (fact, Status: agreed)
+table 'Fakt Auftragsposition'
+	lineageTag: cac9e54d-69a4-5b0c-bd23-90dc61ecb15e
+
+	/// Platzhalter: DAX noch nicht umgesetzt (lotse: measure.auftragsbestand, Status: agreed).
+	/// Definition (Leitung Vertrieb): Summe aller bestätigten, noch nicht gelieferten Auftragspositionen
+	/// Einheit: EUR · Zeitlogik: Stichtag Monatsende · Grain: Kunde, Produkt, Monat
+	/// Qualität: not_negative
+	measure Auftragsbestand = BLANK()
+		formatString: #,##0 €
+		lineageTag: ad109ed9-b206-5b15-81c6-6a91ecbf002a
+
+		annotation lotse_id = measure.auftragsbestand
+
+	/// Platzhalter: DAX noch nicht umgesetzt (lotse: measure.auftragseingang, Status: agreed).
+	/// Definition (Leitung Vertrieb): Nettowert der im Monat bestätigten Auftragspositionen
+	/// Einheit: EUR · Zeitlogik: Bestätigungsdatum im Betrachtungsmonat · Grain: Vertriebsregion, Produkt, Monat
+	/// Qualität: not_negative
+	measure Auftragseingang = BLANK()
+		formatString: #,##0 €
+		lineageTag: d417afb0-c649-506d-a5d2-2bcf709669c4
+
+		annotation lotse_id = measure.auftragseingang
+
+	/// Platzhalter: DAX noch nicht umgesetzt (lotse: measure.auftragsreichweite, Status: agreed).
+	/// Definition (Leitung Controlling): Auftragsbestand in Fertigungsstunden geteilt durch die durchschnittliche Monatskapazität
+	/// Einheit: Monate · Zeitlogik: Stichtag Monatsende · Grain: Werk, Monat
+	/// Qualität: not_negative
+	measure Auftragsreichweite = BLANK()
+		formatString: #,##0.00
+		lineageTag: bf05d3f2-cd85-52c5-96d0-2fc269b9a402
+
+		annotation lotse_id = measure.auftragsreichweite
+
+	/// Platzhalter: DAX noch nicht umgesetzt (lotse: measure.kapazitaetsauslastung, Status: agreed).
+	/// Definition (Leitung Fertigungsplanung): Geplante Fertigungsstunden aus dem Auftragsbestand geteilt durch verfügbare Kapazitätsstunden
+	/// Einheit: % · Zeitlogik: Planmonat · Grain: Werk, Monat
+	/// Qualität: not_negative
+	measure Kapazitätsauslastung = BLANK()
+		formatString: 0.0 %
+		lineageTag: 08327ba7-29dd-57f9-887e-68771eebe11e
+
+		annotation lotse_id = measure.kapazitaetsauslastung
+
+	column auftragsposition_id
+		dataType: string
+		isKey
+		lineageTag: 61ccbf6f-d107-5a9c-b2fe-a3e27e790221
+		summarizeBy: none
+		sourceColumn: auftragsposition_id
+
+	column kunde_id
+		dataType: string
+		isHidden
+		lineageTag: 34487187-ab9b-50ea-b659-b5651d8ffa1d
+		summarizeBy: none
+		sourceColumn: kunde_id
+
+	column produkt_id
+		dataType: string
+		isHidden
+		lineageTag: 069be3a4-9d65-5aa6-a692-6850b5db4a0d
+		summarizeBy: none
+		sourceColumn: produkt_id
+
+	column werk_id
+		dataType: string
+		isHidden
+		lineageTag: 98c56b03-0dcd-51a2-b76d-3ab875ef53a5
+		summarizeBy: none
+		sourceColumn: werk_id
+
+	column bestaetigt_am
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: c2f65539-bf68-5423-a9a7-a0c3a22d01c3
+		summarizeBy: none
+		sourceColumn: bestaetigt_am
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column nettowert
+		dataType: decimal
+		lineageTag: 81a8052e-64fd-5144-bfa2-938eda1d45d5
+		summarizeBy: sum
+		sourceColumn: nettowert
+
+	column offener_wert
+		dataType: decimal
+		lineageTag: 4211c26f-0a76-53b6-9675-8645ab6327ec
+		summarizeBy: sum
+		sourceColumn: offener_wert
+
+	column fertigungsstunden
+		dataType: decimal
+		lineageTag: d378131b-7359-5fec-8a95-2a28f889f926
+		summarizeBy: sum
+		sourceColumn: fertigungsstunden
+
+	partition 'Fakt Auftragsposition' = m
+		mode: import
+		source =
+				let
+					// Platzhalter aus lotse (table.fact_auftragsposition), Quelle: ERP (SAP S/4HANA)
+					Quelle = #table(type table [auftragsposition_id = text, kunde_id = text, produkt_id = text, werk_id = text, bestaetigt_am = date, nettowert = Currency.Type, offener_wert = Currency.Type, fertigungsstunden = Currency.Type], {})
+				in
+					Quelle
+

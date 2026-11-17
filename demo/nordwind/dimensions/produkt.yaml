@@ -1,0 +1,5 @@
+id: dimension.produkt
+name: Produkt
+status: agreed
+hierarchy: [Produktlinie, Produkt]
+from_tables: [table.dim_produkt]

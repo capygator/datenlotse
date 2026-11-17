@@ -1,0 +1,44 @@
+act: 4
+title: Kennzahlen an Daten binden
+question: Auf welcher Ebene und aus welchen Tabellen werden die Kennzahlen berechnet?
+answer: Je Kunde, Produkt, Werk oder Region und Monat – aus Auftragspositionen, Faktura, Lieferungen und Kapazitäten.
+copy:
+  - measures/auftragseingang.yaml
+  - measures/auftragsreichweite.yaml
+  - measures/kapazitaetsauslastung.yaml
+  - measures/liefertreue.yaml
+  - measures/umsatz.yaml
+write:
+  measures/auftragsbestand.yaml:
+    id: measure.auftragsbestand
+    name: Auftragsbestand
+    status: conflict
+    owner: stakeholder.controlling-leitung
+    unit: EUR
+    grain: [dimension.kunde, dimension.produkt, dimension.monat]
+    definitions:
+      - by: stakeholder.vertrieb-leitung
+        text: Summe aller bestätigten, noch nicht gelieferten Auftragspositionen
+        statement: statement.0010
+      - by: stakeholder.controlling-leitung
+        text: Bestätigte Aufträge abzüglich fakturierter Positionen
+        statement: statement.0011
+    time_logic: Stichtag Monatsende
+    serves: [decision.kapazitaetsplanung]
+    from_tables: [table.fact_auftragsposition]
+    quality:
+      - rule: not_negative
+  lotse.yaml:
+    name: Nordwind Maschinenbau GmbH
+    platform: fabric
+    description: Auftragsbestand-Cockpit für die Kapazitätsplanung der Fertigung
+    stages:
+      decision: done
+      product: done
+      measure: active
+      dimension: done
+      table: active
+      source: active
+expect:
+  - {rule: measure_definition_conflict, node: measure.auftragsbestand}
+  - {rule: table_without_source, node: table.fact_lieferzusage}

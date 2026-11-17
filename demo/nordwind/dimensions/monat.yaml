@@ -1,0 +1,5 @@
+id: dimension.monat
+name: Monat
+status: agreed
+hierarchy: [Jahr, Quartal, Monat]
+from_tables: [table.dim_datum]

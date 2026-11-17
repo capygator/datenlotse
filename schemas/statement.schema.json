@@ -1,0 +1,38 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "by": {
+      "pattern": "^stakeholder\\.[a-z0-9][a-z0-9_-]*$",
+      "title": "By",
+      "type": "string"
+    },
+    "context": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context"
+    },
+    "id": {
+      "pattern": "^statement\\.[a-z0-9][a-z0-9_-]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "by",
+    "text"
+  ],
+  "title": "Statement",
+  "type": "object"
+}

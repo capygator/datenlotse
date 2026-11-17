@@ -1,0 +1,28 @@
+act: 2
+title: Datenprodukt
+question: Für wen ist das Cockpit, und wer steht für die Zahlen gerade?
+answer: Das Cockpit ist für die Geschäftsführung, die Zahlen verantwortet das Controlling.
+by: stakeholder.geschaeftsfuehrung
+copy:
+  - statements/0002.yaml
+write:
+  products/auftragsbestand-cockpit.yaml:
+    id: product.auftragsbestand-cockpit
+    name: Auftragsbestand-Cockpit
+    status: draft
+    owner: stakeholder.controlling-leitung
+    statement: statement.0002
+    kind: semantic_model
+    serves: [decision.kapazitaetsplanung]
+  lotse.yaml:
+    name: Nordwind Maschinenbau GmbH
+    platform: fabric
+    description: Auftragsbestand-Cockpit für die Kapazitätsplanung der Fertigung
+    stages:
+      decision: done
+      product: done
+      measure: active
+      dimension: open
+      table: open
+      source: open
+expect: []

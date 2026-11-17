@@ -1,0 +1,11 @@
+act: 6
+title: Ergebnis
+question: Was entsteht daraus?
+answer: Ein Data Contract je Datenprodukt, ein semantisches Modell als TMDL, ein Backlog-Entwurf und ein Lineage-Bild.
+commands:
+  - lotse gen odcs
+  - lotse gen tmdl
+  - lotse gen ado
+  - lotse render mermaid --view lineage
+expect:
+  - {rule: table_without_source, node: table.fact_lieferzusage}

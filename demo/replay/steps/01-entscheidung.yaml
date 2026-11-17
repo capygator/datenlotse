@@ -1,0 +1,9 @@
+act: 1
+title: Entscheidung
+question: Welche Entscheidung trefft ihr regelmäßig, die das Cockpit verbessern soll?
+answer: Wir entscheiden jeden Monat, welches Schichtmodell die Werke fahren. Dafür brauchen wir den Auftragsbestand im Blick.
+by: stakeholder.geschaeftsfuehrung
+copy:
+  - statements/0001.yaml
+  - decisions/kapazitaetsplanung.yaml
+expect: []

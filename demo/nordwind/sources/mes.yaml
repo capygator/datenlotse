@@ -1,0 +1,7 @@
+id: source.mes
+name: MES
+status: agreed
+owner: stakeholder.fertigung-leitung
+statement: statement.0007
+system: MES Fertigung
+objects: [Arbeitsplätze, Kapazitätsplan]

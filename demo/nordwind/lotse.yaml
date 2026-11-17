@@ -1,0 +1,10 @@
+name: Nordwind Maschinenbau GmbH
+platform: fabric
+description: Auftragsbestand-Cockpit für die Kapazitätsplanung der Fertigung
+stages:
+  decision: done
+  product: done
+  measure: done
+  dimension: done
+  table: active
+  source: active

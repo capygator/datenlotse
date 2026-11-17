@@ -1,0 +1,6 @@
+id: question.liefertermin-quelle
+text: In welchem System wird der zugesagte Liefertermin je Auftragsposition erfasst?
+status: open
+owner: stakeholder.vertrieb-leitung
+statement: statement.0009
+about: [measure.liefertreue, table.fact_lieferzusage]

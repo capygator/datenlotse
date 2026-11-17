@@ -1,0 +1,5 @@
+id: dimension.vertriebsregion
+name: Vertriebsregion
+status: agreed
+hierarchy: [Region, Vertriebsgebiet]
+from_tables: [table.dim_kunde]

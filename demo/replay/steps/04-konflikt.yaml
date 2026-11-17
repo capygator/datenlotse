@@ -1,0 +1,35 @@
+act: 3
+title: Konflikt
+question: Controlling, deckt sich die Definition des Auftragsbestands mit eurer Sicht?
+answer: Nein. Auftragsbestand sind bestätigte Aufträge abzüglich fakturierter Positionen.
+by: stakeholder.controlling-leitung
+copy:
+  - statements/0011.yaml
+write:
+  measures/auftragsbestand.yaml:
+    id: measure.auftragsbestand
+    name: Auftragsbestand
+    status: conflict
+    owner: stakeholder.controlling-leitung
+    definitions:
+      - by: stakeholder.vertrieb-leitung
+        text: Summe aller bestätigten, noch nicht gelieferten Auftragspositionen
+        statement: statement.0010
+      - by: stakeholder.controlling-leitung
+        text: Bestätigte Aufträge abzüglich fakturierter Positionen
+        statement: statement.0011
+    serves: [decision.kapazitaetsplanung]
+expect:
+  - {rule: measure_definition_conflict, node: measure.auftragsbestand}
+  - {rule: measure_without_table, node: measure.auftragsbestand}
+  - {rule: measure_without_table, node: measure.auftragseingang}
+  - {rule: measure_without_table, node: measure.auftragsreichweite}
+  - {rule: measure_without_table, node: measure.kapazitaetsauslastung}
+  - {rule: measure_without_table, node: measure.liefertreue}
+  - {rule: measure_without_table, node: measure.umsatz}
+  - {rule: missing_grain, node: measure.auftragsbestand}
+  - {rule: missing_grain, node: measure.auftragseingang}
+  - {rule: missing_grain, node: measure.auftragsreichweite}
+  - {rule: missing_grain, node: measure.kapazitaetsauslastung}
+  - {rule: missing_grain, node: measure.liefertreue}
+  - {rule: missing_grain, node: measure.umsatz}

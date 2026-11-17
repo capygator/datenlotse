@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "platform": {
+      "const": "fabric",
+      "default": "fabric",
+      "title": "Platform",
+      "type": "string"
+    },
+    "stages": {
+      "additionalProperties": {
+        "enum": [
+          "open",
+          "active",
+          "done"
+        ],
+        "type": "string"
+      },
+      "default": {},
+      "propertyNames": {
+        "enum": [
+          "decision",
+          "product",
+          "measure",
+          "dimension",
+          "table",
+          "source"
+        ]
+      },
+      "title": "Stages",
+      "type": "object"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "WorkspaceConfig",
+  "type": "object"
+}

@@ -1,0 +1,6 @@
+id: decision.kapazitaetsplanung
+name: Kapazitätsplanung Fertigung
+description: Monatliche Festlegung des Schichtmodells je Werk
+status: agreed
+owner: stakeholder.geschaeftsfuehrung
+statement: statement.0001

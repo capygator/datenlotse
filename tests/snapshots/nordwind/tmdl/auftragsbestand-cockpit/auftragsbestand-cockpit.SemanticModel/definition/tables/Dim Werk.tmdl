@@ -1,0 +1,26 @@
+/// lotse: table.dim_werk (dimension, Status: agreed)
+table 'Dim Werk'
+	lineageTag: 2023b1de-be64-53a2-ae30-5f2cf1bad087
+
+	column werk_id
+		dataType: string
+		isKey
+		lineageTag: 940a83dd-1d05-545c-ae0d-0b1029320f54
+		summarizeBy: none
+		sourceColumn: werk_id
+
+	column werk
+		dataType: string
+		lineageTag: 1b8ce42c-9ad5-5abe-8a9b-8c8a06004af1
+		summarizeBy: none
+		sourceColumn: werk
+
+	partition 'Dim Werk' = m
+		mode: import
+		source =
+				let
+					// Platzhalter aus lotse (table.dim_werk), Quelle: ERP (SAP S/4HANA), MES (MES Fertigung)
+					Quelle = #table(type table [werk_id = text, werk = text], {})
+				in
+					Quelle
+
