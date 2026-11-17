@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, Response, StreamingResponse
 from pydantic import BaseModel
 from watchfiles import Change, awatch
 
@@ -157,6 +157,10 @@ class Hub:
             pending = anext(changes)
 
 
+VENDOR_FILES = frozenset({"cytoscape.min.js", "elk.bundled.js", "cytoscape-elk.js"})
+"""Im Paket mitgelieferte Viewer-Bibliotheken (offline-fähig, Lizenzen in viewer/vendor/)."""
+
+
 def viewer_html() -> str:
     return resources.files("lotse.viewer").joinpath("index.html").read_text(encoding="utf-8")
 
@@ -205,6 +209,17 @@ def create_app(workspace: Path, *, watch: bool = True) -> FastAPI:
     @app.get("/", response_class=HTMLResponse)
     async def index() -> HTMLResponse:
         return HTMLResponse(viewer_html())
+
+    @app.get("/vendor/{name}")
+    async def vendor(name: str) -> Response:
+        if name not in VENDOR_FILES:
+            raise HTTPException(status_code=404)
+        data = resources.files("lotse.viewer").joinpath("vendor", name).read_bytes()
+        return Response(
+            data,
+            media_type="text/javascript",
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
 
     @app.get("/api/graph")
     async def graph() -> dict[str, Any]:
