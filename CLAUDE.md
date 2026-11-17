@@ -19,9 +19,10 @@ uv run lotse schema                             # schemas/*.json nach Modelländ
 uv run lotse serve -w demo/nordwind --no-open   # Live-Viewer auf http://127.0.0.1:8765/
 uv run lotse render archify --view lineage -w demo/nordwind   # → demo/nordwind/out/lineage.json
 LOTSE_UPDATE_SNAPSHOTS=1 uv run pytest tests/test_generators.py  # Generator-Snapshots neu schreiben
+uv run lotse demo --replay            # Demo: Leertaste je Schritt, --auto Selbstlauf, --record Video (Playwright)
 ```
 
-CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`, `render <mermaid|archify> --view <name>`, `render views`, `serve [--host 127.0.0.1] [--port 8765] [--open/--no-open]`, `gen <odcs|tmdl>`, `gen ado [--apply --org … --project … --process agile|scrum]`. Ausgabe von `render`/`gen` standardmäßig nach `<workspace>/out/` (gitignored), `-o DIR` überschreibt; `gen` schreibt in `<out>/<generator>/` und ersetzt dort nur eigene Ausgaben (Projektordner je Produkt bzw. `*.odcs.yaml`). Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
+CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`, `render <mermaid|archify> --view <name>`, `render views`, `serve [--host 127.0.0.1] [--port 8765] [--open/--no-open]`, `gen <odcs|tmdl>`, `gen ado [--apply --org … --project … --process agile|scrum]`, `demo [--replay] [--auto] [--record]`. Ausgabe von `render`/`gen` standardmäßig nach `<workspace>/out/` (gitignored), `-o DIR` überschreibt; `gen` schreibt in `<out>/<generator>/` und ersetzt dort nur eigene Ausgaben (Projektordner je Produkt bzw. `*.odcs.yaml`). Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
 
 ## Architektur
 
@@ -39,6 +40,8 @@ CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `stat
 - **Renderer** (`src/lotse/render/`) implementieren `Renderer.render(ViewResult) -> str`; `archify` validiert gegen die vendorten Schemas (`render/schemas/archify/`, Archify 3.2.0), `flow` → `dataflow` (max. 5 Stufen), `erd` → `erd`.
 - **Generatoren** (`src/lotse/gen/`) bauen vorher neu und brechen bei `error`-Befunden ab; sie lesen die Pydantic-Entitäten aus `BuildResult` und liefern `{relativer Pfad: Text}`. Neue Befehle in `gen/cli.py` (`gen_app`) ergänzen; Untergruppen importieren aus `cli_common.py`, nie aus `cli.py`. `odcs` validiert gegen `gen/schemas/odcs-json-schema-v3.1.0.json` (Tag v3.1.0, Quelle in `gen/schemas/README.md`). `tmdl` erzeugt je Produkt ein PBIP (SemanticModel in TMDL + leerer PBIR-Bericht); lineageTags = UUIDv5 aus der lotse-id; Format entspricht byte-genau dem Roundtrip durch Microsofts `TmdlSerializer`.
 - **Stufen**: Entscheidung → Datenprodukt → Kennzahl → Dimension → Tabelle → Quelle (`registry.ENTITY_TYPES`); Stakeholder, Aussagen und Fragen haben keine Stufe.
+- **Demo** (`demo/`, `src/lotse/demo/`): `demo/replay/steps/NN-*.yaml` je Schritt mit `act`, `question`, `answer`, `copy` (Datei aus `demo/nordwind/` übernehmen), `write` (Zwischenstand als Mapping), `delete`, `commands` und `expect` (erwartete Befunde als `{rule, node}`). `replay.py` spielt ab und vergleicht; `run.py` startet dazu den Viewer und blendet Frage/Antwort per `POST /api/caption` ein. Der Replay muss exakt im Endzustand `demo/nordwind/` enden (`tests/test_replay.py`). Wer `demo/nordwind/` ändert, muss Schritte und `expect` nachziehen. Sprechtext: `demo/SCRIPT.md`.
+- **Moderation** (M5, `.claude/`): Skill `moderation` (Kernregeln aus Konzept §9), Commands `/lotse-start`, `/lotse-next`, `/lotse-recap`, `/lotse-decide`. PostToolUse-Hook `.claude/hooks/lotse_check.py` führt nach YAML-Schreibzugriffen in einem Workspace `lotse check` aus (Exit 2 → Rückmeldung an Claude). Die Moderatorregeln gelten nur in einer Workshop-Session, nicht bei der Entwicklung.
 
 ## Invarianten
 
