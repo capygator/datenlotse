@@ -201,6 +201,10 @@ def demo(
     open_browser: Annotated[
         bool, typer.Option("--open/--no-open", help="Viewer im Browser öffnen.")
     ] = True,
+    hold: Annotated[
+        bool,
+        typer.Option("--hold/--no-hold", help="Viewer nach dem letzten Schritt weiter bedienen."),
+    ] = True,
 ) -> None:
     """Demo starten: Endzustand erkunden oder mit --replay die sechs Akte abspielen."""
     import time
@@ -257,6 +261,14 @@ def demo(
         results, failed_commands = play(paths, base_url=url, wait=wait, echo=typer.echo)
         if stop_recording:
             typer.echo(f"Video: {stop_recording()}")
+        elif hold:
+            typer.echo("")
+            typer.echo(f"Demo beendet. Viewer läuft weiter unter {url} (Strg+C beendet).")
+            try:
+                while True:
+                    time.sleep(0.5)
+            except KeyboardInterrupt:
+                typer.echo("")
     failed = [r.name for r in results if not r.ok]
     typer.echo("")
     if failed or failed_commands:
