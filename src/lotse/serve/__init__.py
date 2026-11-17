@@ -1,5 +1,5 @@
 """Live-Viewer: ``lotse serve``."""
 
-from lotse.serve.app import create_app
+from lotse.serve.app import LotseServer, create_app
 
-__all__ = ["create_app"]
+__all__ = ["LotseServer", "create_app"]

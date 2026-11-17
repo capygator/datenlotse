@@ -13,10 +13,8 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
-import uvicorn
-
 from lotse.demo.replay import Step, StepResult, replay
-from lotse.serve import create_app
+from lotse.serve import LotseServer, create_app
 
 
 @dataclass(frozen=True)
@@ -33,15 +31,7 @@ class DemoPaths:
 @contextmanager
 def running_server(workspace: Path, host: str, port: int) -> Iterator[str]:
     """Startet den Viewer-Server in einem Thread und wartet, bis er antwortet."""
-    server = uvicorn.Server(
-        uvicorn.Config(
-            create_app(workspace),
-            host=host,
-            port=port,
-            log_level="warning",
-            timeout_graceful_shutdown=1,
-        )
-    )
+    server = LotseServer(create_app(workspace), host=host, port=port)
     thread = threading.Thread(target=server.run, daemon=True)
     thread.start()
     url = f"http://{host}:{port}/"
@@ -52,13 +42,13 @@ def running_server(workspace: Path, host: str, port: int) -> Iterator[str]:
                 break
         except OSError:
             if time.monotonic() > deadline or not thread.is_alive():
-                server.should_exit = True
+                server.stop()
                 raise RuntimeError(f"Viewer-Server unter {url} startet nicht") from None
             time.sleep(0.1)
     try:
         yield url
     finally:
-        server.should_exit = True
+        server.stop()
         thread.join(timeout=5)
 
 

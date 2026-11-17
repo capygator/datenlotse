@@ -170,18 +170,14 @@ def serve(
     import threading
     import webbrowser
 
-    import uvicorn
-
-    from lotse.serve import create_app
+    from lotse.serve import LotseServer, create_app
 
     ws = resolve_workspace(workspace)
     url = f"http://{host}:{port}/"
     typer.echo(f"lotse serve: {ws} → {url} (Strg+C beendet)")
     if open_browser:
         threading.Timer(1.0, webbrowser.open, args=(url,)).start()
-    uvicorn.run(
-        create_app(ws), host=host, port=port, log_level="warning", timeout_graceful_shutdown=1
-    )
+    LotseServer(create_app(ws), host=host, port=port).run()
 
 
 @app.command()

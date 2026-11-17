@@ -10,8 +10,10 @@ from contextlib import asynccontextmanager, suppress
 from dataclasses import dataclass
 from importlib import resources
 from pathlib import Path
+from types import FrameType
 from typing import Any
 
+import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, Response, StreamingResponse
 from pydantic import BaseModel
@@ -79,6 +81,7 @@ class Hub:
         self.watching = asyncio.Event()
         self._clients: set[asyncio.Queue[Event | None]] = set()
         self._lock = asyncio.Lock()
+        self.loop: asyncio.AbstractEventLoop | None = None
 
     def _build(self) -> tuple[BuildResult, Snapshot]:
         result = build(self.workspace, self.db_path)
@@ -125,6 +128,11 @@ class Hub:
     def close(self) -> None:
         for queue in self._clients:
             queue.put_nowait(None)
+
+    def close_threadsafe(self) -> None:
+        """Beendet alle SSE-Streams aus einem anderen Thread (vor dem Server-Shutdown)."""
+        if self.loop is not None and not self.loop.is_closed():
+            self.loop.call_soon_threadsafe(self.close)
 
     @property
     def clients(self) -> int:
@@ -190,6 +198,7 @@ def create_app(workspace: Path, *, watch: bool = True) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        hub.loop = asyncio.get_running_loop()
         await hub.rebuild()
         stop = asyncio.Event()
         task = asyncio.create_task(hub.watch(stop)) if watch else None
@@ -250,3 +259,27 @@ def create_app(workspace: Path, *, watch: bool = True) -> FastAPI:
         return {"caption": hub.caption}
 
     return app
+
+
+class LotseServer(uvicorn.Server):
+    """uvicorn-Server, der offene SSE-Streams vor dem Beenden sauber schließt.
+
+    Ohne das wartet uvicorn auf die endlosen Streams und bricht sie dann mit
+    ``CancelledError`` ab.
+    """
+
+    def __init__(self, app: FastAPI, *, host: str, port: int) -> None:
+        super().__init__(
+            uvicorn.Config(
+                app, host=host, port=port, log_level="warning", timeout_graceful_shutdown=2
+            )
+        )
+        self.hub: Hub = app.state.hub
+
+    def handle_exit(self, sig: int, frame: FrameType | None) -> None:
+        self.hub.close_threadsafe()
+        super().handle_exit(sig, frame)
+
+    def stop(self) -> None:
+        self.hub.close_threadsafe()
+        self.should_exit = True
