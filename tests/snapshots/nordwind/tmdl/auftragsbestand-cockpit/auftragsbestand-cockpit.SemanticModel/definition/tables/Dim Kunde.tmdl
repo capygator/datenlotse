@@ -1,0 +1,44 @@
+/// lotse: table.dim_kunde (dimension, Status: agreed)
+table 'Dim Kunde'
+	lineageTag: 2a98c7ad-c7e4-5f15-bb91-620f5c8d8500
+
+	column kunde_id
+		dataType: string
+		isKey
+		lineageTag: 873e56d2-6fba-51dd-8422-091f9d444238
+		summarizeBy: none
+		sourceColumn: kunde_id
+
+	column kunde
+		dataType: string
+		lineageTag: 1bbb89dc-03a1-5ddb-a065-d45ac2dca01e
+		summarizeBy: none
+		sourceColumn: kunde
+
+	column kundengruppe
+		dataType: string
+		lineageTag: cc1a5bcd-b00e-5881-b8b4-9f6e1d154d98
+		summarizeBy: none
+		sourceColumn: kundengruppe
+
+	column vertriebsgebiet
+		dataType: string
+		lineageTag: 95f143eb-7178-59f4-b1d5-11ae7cf4a49e
+		summarizeBy: none
+		sourceColumn: vertriebsgebiet
+
+	column region
+		dataType: string
+		lineageTag: e29ca65a-fa70-50b9-b14b-4ce62c91ce6c
+		summarizeBy: none
+		sourceColumn: region
+
+	partition 'Dim Kunde' = m
+		mode: import
+		source =
+				let
+					// Platzhalter aus lotse (table.dim_kunde), Quelle: CRM (CRM Vertrieb), ERP (SAP S/4HANA)
+					Quelle = #table(type table [kunde_id = text, kunde = text, kundengruppe = text, vertriebsgebiet = text, region = text], {})
+				in
+					Quelle
+

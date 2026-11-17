@@ -1,0 +1,72 @@
+%% lotse render mermaid --view model
+%% Nordwind Maschinenbau GmbH: Datenmodell
+%% Gold-Tabellen mit Spalten und Beziehungen aus columns[].references (Fremdschlüssel → Schlüsselspalte der Zieltabelle).
+erDiagram
+    dim_datum {
+        date datum PK
+        string monat
+        string quartal
+        int64 jahr
+    }
+    dim_kunde {
+        string kunde_id PK
+        string kunde
+        string kundengruppe
+        string vertriebsgebiet
+        string region
+    }
+    dim_produkt {
+        string produkt_id PK
+        string produkt
+        string produktlinie
+    }
+    dim_werk {
+        string werk_id PK
+        string werk
+    }
+    fact_auftragsposition {
+        string auftragsposition_id PK
+        string kunde_id FK
+        string produkt_id FK
+        string werk_id FK
+        date bestaetigt_am FK
+        decimal nettowert
+        decimal offener_wert
+        decimal fertigungsstunden
+    }
+    fact_faktura {
+        string fakturaposition_id PK
+        string kunde_id FK
+        string produkt_id FK
+        date fakturadatum FK
+        decimal nettoumsatz
+    }
+    fact_kapazitaet {
+        string werk_id FK
+        date monat FK
+        decimal verfuegbare_stunden
+    }
+    fact_lieferung {
+        string lieferposition_id PK
+        string auftragsposition_id
+        string kunde_id FK
+        string werk_id FK
+        date lieferdatum FK
+    }
+    fact_lieferzusage {
+        string auftragsposition_id PK
+        date zugesagt_am FK
+    }
+    fact_auftragsposition }o--|| dim_datum : "bestaetigt_am"
+    fact_auftragsposition }o--|| dim_kunde : "kunde_id"
+    fact_auftragsposition }o--|| dim_produkt : "produkt_id"
+    fact_auftragsposition }o--|| dim_werk : "werk_id"
+    fact_faktura }o--|| dim_datum : "fakturadatum"
+    fact_faktura }o--|| dim_kunde : "kunde_id"
+    fact_faktura }o--|| dim_produkt : "produkt_id"
+    fact_kapazitaet }o--|| dim_datum : "monat"
+    fact_kapazitaet }o--|| dim_werk : "werk_id"
+    fact_lieferung }o--|| dim_datum : "lieferdatum"
+    fact_lieferung }o--|| dim_kunde : "kunde_id"
+    fact_lieferung }o--|| dim_werk : "werk_id"
+    fact_lieferzusage }o--|| dim_datum : "zugesagt_am"

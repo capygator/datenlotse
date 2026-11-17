@@ -16,9 +16,11 @@ uv run ruff check . && uv run ruff format --check .
 uv run mypy src/lotse                           # strict über pyproject
 uv run lotse check -w demo/nordwind             # Exit 1 bei error-Befunden
 uv run lotse schema                             # schemas/*.json nach Modelländerung neu erzeugen
+uv run lotse render archify --view lineage -w demo/nordwind   # → demo/nordwind/out/lineage.json
+LOTSE_UPDATE_SNAPSHOTS=1 uv run pytest tests/test_generators.py  # Generator-Snapshots neu schreiben
 ```
 
-CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`. Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
+CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`, `render <mermaid|archify> --view <name>`, `render views`, `gen <odcs|tmdl>`. Ausgabe von `render`/`gen` standardmäßig nach `<workspace>/out/` (gitignored), `-o DIR` überschreibt; `gen` schreibt in `<out>/<generator>/` und leert diesen Ordner vorher. Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
 
 ## Architektur
 
@@ -28,6 +30,9 @@ CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `stat
 - **Kanten** entstehen aus `graph.REF_FIELDS` (Kantenart = Feldname) plus `definition_by`, `definition_statement`, `column_references`. Neues ID-Feld → in `REF_FIELDS` aufnehmen, sonst fehlt es in `dangling_reference`.
 - **Regeln** sind `src/lotse/rules/*.sql`, eine pro Datei, Spalten `rule, severity, node_id, message`; `rule` muss dem Dateinamen entsprechen (wird geprüft). Severities in Rangfolge: `error`, `conflict`, `gap`, `warn`, `info` (`model/registry.py`).
 - **`query.py`**: `next_question` (Fehler zuerst, dann frühere Stufe, dann Severity; Fragetext aus `QUESTION_TEMPLATES`) und `stage_status`. `next` und `status` bauen vorher immer neu.
+- **Sichten** sind `src/lotse/views/*.sql` mit Kopf `-- title:`, `-- kind: flow|erd`, `-- description:` und festen Spalten (`views/__init__.py`: `element, id, label, sublabel, lane, lane_label, status, finding, src, dst, detail`). `lineage` fasst Kennzahlen je Owner zu Blöcken zusammen (Archify ≤ 12 Knoten), `lineage_detail` zeigt jede Kennzahl, `model` liefert Tabellen + Fremdschlüssel. Spaltenreihenfolge kommt aus `pos` im `column`-Attribut.
+- **Renderer** (`src/lotse/render/`) implementieren `Renderer.render(ViewResult) -> str`; `archify` validiert gegen die vendorten Schemas (`render/schemas/archify/`, Archify 3.2.0), `flow` → `dataflow` (max. 5 Stufen), `erd` → `erd`.
+- **Generatoren** (`src/lotse/gen/`) bauen vorher neu und brechen bei `error`-Befunden ab; sie lesen die Pydantic-Entitäten aus `BuildResult` und liefern `{relativer Pfad: Text}`. Neue Befehle in `gen/cli.py` (`gen_app`) ergänzen; Untergruppen importieren aus `cli_common.py`, nie aus `cli.py`. `odcs` validiert gegen `gen/schemas/odcs-json-schema-v3.1.0.json` (Tag v3.1.0, Quelle in `gen/schemas/README.md`). `tmdl` erzeugt je Produkt ein PBIP (SemanticModel in TMDL + leerer PBIR-Bericht); lineageTags = UUIDv5 aus der lotse-id; Format entspricht byte-genau dem Roundtrip durch Microsofts `TmdlSerializer`.
 - **Stufen**: Entscheidung → Datenprodukt → Kennzahl → Dimension → Tabelle → Quelle (`registry.ENTITY_TYPES`); Stakeholder, Aussagen und Fragen haben keine Stufe.
 
 ## Invarianten
@@ -41,7 +46,7 @@ CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `stat
 
 ## Tests
 
-`tests/conftest.py` stellt `BASE` (befundfreier Mini-Workspace) und das Fixture `run` bereit; Regeltests mutieren `BASE` (je Regel positiv + negativ). `test_nordwind.py` fixiert die exakte Befundliste und prüft Determinismus des Neubaus.
+`tests/conftest.py` stellt `BASE` (befundfreier Mini-Workspace) und das Fixture `run` bereit; Regeltests mutieren `BASE` (je Regel positiv + negativ). `test_nordwind.py` fixiert die exakte Befundliste und prüft Determinismus des Neubaus. `test_generators.py` vergleicht alle Render-/Generator-Ausgaben byte-genau mit `tests/snapshots/nordwind/` und prüft zwei Läufe auf Gleichheit.
 
 ## Offene Entscheidungen (nicht eigenmächtig treffen, nachfragen)
 

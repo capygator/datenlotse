@@ -8,9 +8,11 @@ from typing import Annotated
 
 import typer
 
+from lotse.gen.cli import gen_app
 from lotse.model.registry import SEVERITIES
 from lotse.model.schema import write_schemas
 from lotse.query import next_question, stage_status
+from lotse.render.cli import render_app
 from lotse.store.build import BuildResult, build
 from lotse.store.workspace import WorkspaceError, find_workspace, init_workspace
 
@@ -20,6 +22,8 @@ app = typer.Typer(
     no_args_is_help=True,
     add_completion=False,
 )
+app.add_typer(render_app, name="render")
+app.add_typer(gen_app, name="gen")
 
 WorkspaceOpt = Annotated[
     Path | None,

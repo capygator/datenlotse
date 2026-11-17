@@ -1,0 +1,59 @@
+/// lotse: table.fact_faktura (fact, Status: agreed)
+table 'Fakt Faktura'
+	lineageTag: 7c9e6a7f-7ed5-53c5-bbae-8e50b6bfabff
+
+	/// Platzhalter: DAX noch nicht umgesetzt (lotse: measure.umsatz, Status: agreed).
+	/// Definition (Leitung Controlling): Fakturierter Nettoumsatz
+	/// Einheit: EUR · Zeitlogik: Fakturadatum im Betrachtungsmonat · Grain: Kunde, Produkt, Monat
+	measure Umsatz = BLANK()
+		formatString: #,##0 €
+		lineageTag: 5d65176e-4ce9-5679-b959-1c597e996aa9
+
+		annotation lotse_id = measure.umsatz
+
+	column fakturaposition_id
+		dataType: string
+		isKey
+		lineageTag: 2f83e738-279a-5046-88de-1cf2a8cc2c42
+		summarizeBy: none
+		sourceColumn: fakturaposition_id
+
+	column kunde_id
+		dataType: string
+		isHidden
+		lineageTag: 7a03fc57-1cd2-58a7-aa79-a3241e00263e
+		summarizeBy: none
+		sourceColumn: kunde_id
+
+	column produkt_id
+		dataType: string
+		isHidden
+		lineageTag: 4a558e50-e643-5eaf-ae9b-4ac4804246e6
+		summarizeBy: none
+		sourceColumn: produkt_id
+
+	column fakturadatum
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: fea62e6b-b7b7-57ae-83a7-2b5c73144d6b
+		summarizeBy: none
+		sourceColumn: fakturadatum
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column nettoumsatz
+		dataType: decimal
+		lineageTag: 2be4c6d1-7fcb-579e-8aeb-766179ad3273
+		summarizeBy: sum
+		sourceColumn: nettoumsatz
+
+	partition 'Fakt Faktura' = m
+		mode: import
+		source =
+				let
+					// Platzhalter aus lotse (table.fact_faktura), Quelle: ERP (SAP S/4HANA)
+					Quelle = #table(type table [fakturaposition_id = text, kunde_id = text, produkt_id = text, fakturadatum = date, nettoumsatz = Currency.Type], {})
+				in
+					Quelle
+

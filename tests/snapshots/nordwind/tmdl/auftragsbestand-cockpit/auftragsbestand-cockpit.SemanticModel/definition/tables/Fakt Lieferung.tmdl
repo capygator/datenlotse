@@ -1,0 +1,60 @@
+/// lotse: table.fact_lieferung (fact, Status: agreed)
+table 'Fakt Lieferung'
+	lineageTag: 13fb2b7b-0307-5895-9512-59f1899172e4
+
+	/// Platzhalter: DAX noch nicht umgesetzt (lotse: measure.liefertreue, Status: draft).
+	/// Definition (Leitung Vertrieb): Anteil der Lieferpositionen, die spätestens am zugesagten Liefertermin geliefert wurden
+	/// Einheit: % · Zeitlogik: Lieferdatum im Betrachtungsmonat · Grain: Kunde, Werk, Monat
+	/// Qualität: between_0_and_100
+	measure Liefertreue = BLANK()
+		formatString: 0.0 %
+		lineageTag: d6db4cf1-1d95-5c7b-96e1-e829de187b9b
+
+		annotation lotse_id = measure.liefertreue
+
+	column lieferposition_id
+		dataType: string
+		isKey
+		lineageTag: 02477b5e-080f-5d24-852d-59fbf28f26f7
+		summarizeBy: none
+		sourceColumn: lieferposition_id
+
+	column auftragsposition_id
+		dataType: string
+		lineageTag: 5b2efc2c-4bb7-5ec6-843f-72e28878c35b
+		summarizeBy: none
+		sourceColumn: auftragsposition_id
+
+	column kunde_id
+		dataType: string
+		isHidden
+		lineageTag: 13bfd3b4-6957-5ab4-9806-5a84e820e612
+		summarizeBy: none
+		sourceColumn: kunde_id
+
+	column werk_id
+		dataType: string
+		isHidden
+		lineageTag: dbc12677-4590-55de-bdfe-75a59de51ba9
+		summarizeBy: none
+		sourceColumn: werk_id
+
+	column lieferdatum
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: 461ddf87-788d-5932-a6ea-76b4270cf654
+		summarizeBy: none
+		sourceColumn: lieferdatum
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'Fakt Lieferung' = m
+		mode: import
+		source =
+				let
+					// Platzhalter aus lotse (table.fact_lieferung), Quelle: ERP (SAP S/4HANA)
+					Quelle = #table(type table [lieferposition_id = text, auftragsposition_id = text, kunde_id = text, werk_id = text, lieferdatum = date], {})
+				in
+					Quelle
+

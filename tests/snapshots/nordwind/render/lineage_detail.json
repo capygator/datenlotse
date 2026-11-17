@@ -1,0 +1,251 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Nordwind Maschinenbau GmbH: Lineage (Detail)",
+    "locale": "de",
+    "subtitle": "Datenfluss Quelle → Tabelle → Kennzahl → Datenprodukt → Entscheidung, jede Kennzahl als eigener Knoten.",
+    "output": "lineage_detail.html"
+  },
+  "stages": [
+    {
+      "label": "Quelle"
+    },
+    {
+      "label": "Tabelle"
+    },
+    {
+      "label": "Kennzahl"
+    },
+    {
+      "label": "Datenprodukt"
+    },
+    {
+      "label": "Entscheidung"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "source-erp",
+      "type": "external",
+      "label": "ERP",
+      "stage": 0,
+      "row": 0
+    },
+    {
+      "id": "source-mes",
+      "type": "external",
+      "label": "MES",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "table-fact_auftragsposition",
+      "type": "database",
+      "label": "Fakt Auftragsposition",
+      "stage": 1,
+      "row": 0
+    },
+    {
+      "id": "table-fact_faktura",
+      "type": "database",
+      "label": "Fakt Faktura",
+      "stage": 1,
+      "row": 1
+    },
+    {
+      "id": "table-fact_kapazitaet",
+      "type": "database",
+      "label": "Fakt Kapazität",
+      "stage": 1,
+      "row": 2
+    },
+    {
+      "id": "table-fact_lieferung",
+      "type": "database",
+      "label": "Fakt Lieferung",
+      "stage": 1,
+      "row": 3
+    },
+    {
+      "id": "table-fact_lieferzusage",
+      "type": "database",
+      "label": "Fakt Lieferzusage",
+      "tag": "Entwurf · Lücke",
+      "stage": 1,
+      "row": 4
+    },
+    {
+      "id": "measure-auftragsbestand",
+      "type": "backend",
+      "label": "Auftragsbestand",
+      "stage": 2,
+      "row": 0
+    },
+    {
+      "id": "measure-auftragseingang",
+      "type": "backend",
+      "label": "Auftragseingang",
+      "stage": 2,
+      "row": 1
+    },
+    {
+      "id": "measure-auftragsreichweite",
+      "type": "backend",
+      "label": "Auftragsreichweite",
+      "stage": 2,
+      "row": 2
+    },
+    {
+      "id": "measure-kapazitaetsauslastung",
+      "type": "backend",
+      "label": "Kapazitätsauslastung",
+      "stage": 2,
+      "row": 3
+    },
+    {
+      "id": "measure-liefertreue",
+      "type": "backend",
+      "label": "Liefertreue",
+      "tag": "Entwurf",
+      "stage": 2,
+      "row": 4
+    },
+    {
+      "id": "measure-umsatz",
+      "type": "backend",
+      "label": "Umsatz",
+      "stage": 2,
+      "row": 5
+    },
+    {
+      "id": "product-auftragsbestand-cockpit",
+      "type": "frontend",
+      "label": "Auftragsbestand-Cockpit",
+      "stage": 3,
+      "row": 0
+    },
+    {
+      "id": "decision-kapazitaetsplanung",
+      "type": "external",
+      "label": "Kapazitätsplanung Fertigung",
+      "icon": "flag",
+      "stage": 4,
+      "row": 0
+    }
+  ],
+  "flows": [
+    {
+      "from": "measure-auftragsbestand",
+      "to": "product-auftragsbestand-cockpit",
+      "label": "Kennzahlen"
+    },
+    {
+      "from": "measure-auftragseingang",
+      "to": "product-auftragsbestand-cockpit",
+      "label": "Kennzahlen"
+    },
+    {
+      "from": "measure-auftragsreichweite",
+      "to": "product-auftragsbestand-cockpit",
+      "label": "Kennzahlen"
+    },
+    {
+      "from": "measure-kapazitaetsauslastung",
+      "to": "product-auftragsbestand-cockpit",
+      "label": "Kennzahlen"
+    },
+    {
+      "from": "measure-liefertreue",
+      "to": "product-auftragsbestand-cockpit",
+      "label": "Kennzahlen",
+      "variant": "dashed"
+    },
+    {
+      "from": "measure-umsatz",
+      "to": "product-auftragsbestand-cockpit",
+      "label": "Kennzahlen"
+    },
+    {
+      "from": "product-auftragsbestand-cockpit",
+      "to": "decision-kapazitaetsplanung",
+      "label": "stützt"
+    },
+    {
+      "from": "source-erp",
+      "to": "table-fact_auftragsposition",
+      "label": "liefert"
+    },
+    {
+      "from": "source-erp",
+      "to": "table-fact_faktura",
+      "label": "liefert"
+    },
+    {
+      "from": "source-erp",
+      "to": "table-fact_lieferung",
+      "label": "liefert"
+    },
+    {
+      "from": "source-mes",
+      "to": "table-fact_kapazitaet",
+      "label": "liefert"
+    },
+    {
+      "from": "table-fact_auftragsposition",
+      "to": "measure-auftragsbestand",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_auftragsposition",
+      "to": "measure-auftragseingang",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_auftragsposition",
+      "to": "measure-auftragsreichweite",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_auftragsposition",
+      "to": "measure-kapazitaetsauslastung",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_faktura",
+      "to": "measure-umsatz",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_kapazitaet",
+      "to": "measure-auftragsreichweite",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_kapazitaet",
+      "to": "measure-kapazitaetsauslastung",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_lieferung",
+      "to": "measure-liefertreue",
+      "label": "speist",
+      "variant": "dashed"
+    },
+    {
+      "from": "table-fact_lieferzusage",
+      "to": "measure-liefertreue",
+      "label": "speist",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Offene Befunde",
+      "items": [
+        "Fakt Lieferzusage: Lücke"
+      ]
+    }
+  ]
+}
