@@ -18,7 +18,7 @@ uv run lotse check -w demo/nordwind             # Exit 1 bei error-Befunden
 uv run lotse schema                             # schemas/*.json nach Modelländerung neu erzeugen
 ```
 
-CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`. Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
+CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`, `gen ado [--apply --org … --project … --process agile|scrum]`. Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
 
 ## Architektur
 
@@ -28,6 +28,7 @@ CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `stat
 - **Kanten** entstehen aus `graph.REF_FIELDS` (Kantenart = Feldname) plus `definition_by`, `definition_statement`, `column_references`. Neues ID-Feld → in `REF_FIELDS` aufnehmen, sonst fehlt es in `dangling_reference`.
 - **Regeln** sind `src/lotse/rules/*.sql`, eine pro Datei, Spalten `rule, severity, node_id, message`; `rule` muss dem Dateinamen entsprechen (wird geprüft). Severities in Rangfolge: `error`, `conflict`, `gap`, `warn`, `info` (`model/registry.py`).
 - **`query.py`**: `next_question` (Fehler zuerst, dann frühere Stufe, dann Severity; Fragetext aus `QUESTION_TEMPLATES`) und `stage_status`. `next` und `status` bauen vorher immer neu.
+- **`gen/ado/`** (M6): `plan.py` Workspace → Backlog (Epic je Produkt, Feature je Kennzahl und Tabelle, Story je Befund `conflict|gap|warn` und offener Frage), rein und byte-stabil nach `<ws>/out/ado/backlog.json`; `sync.py` idempotenter Abgleich gegen das Protokoll `WorkItemStore` (Tags `lotse-ws:<scope>` + `lotse:<key>`); `rest.py` einzige Stelle mit ADO-REST-Details (stdlib `urllib`). Details und Abnahme-Anleitung: `docs/ado.md`.
 - **Stufen**: Entscheidung → Datenprodukt → Kennzahl → Dimension → Tabelle → Quelle (`registry.ENTITY_TYPES`); Stakeholder, Aussagen und Fragen haben keine Stufe.
 
 ## Invarianten
@@ -41,10 +42,10 @@ CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `stat
 
 ## Tests
 
-`tests/conftest.py` stellt `BASE` (befundfreier Mini-Workspace) und das Fixture `run` bereit; Regeltests mutieren `BASE` (je Regel positiv + negativ). `test_nordwind.py` fixiert die exakte Befundliste und prüft Determinismus des Neubaus.
+`tests/conftest.py` stellt `BASE` (befundfreier Mini-Workspace) und das Fixture `run` bereit; Regeltests mutieren `BASE` (je Regel positiv + negativ). `test_nordwind.py` fixiert die exakte Befundliste und prüft Determinismus des Neubaus. `test_gen_ado.py`: Snapshot `tests/snapshots/ado/` (neu schreiben mit `LOTSE_UPDATE_SNAPSHOTS=1`), `--apply` gegen `tests/ado_fake.py` (simuliertes ADO auf HTTP-Ebene).
 
 ## Offene Entscheidungen (nicht eigenmächtig treffen, nachfragen)
 
-- `gen ado` über Remote-MCP-Server oder REST?
+- `gen ado` über Remote-MCP-Server oder REST? Vorläufig REST (M6), Bestätigung offen; MCP hieße nur ein weiterer `WorkItemStore`.
 - DPU_REQ-Excel als Import/Export?
 - Siebter Entitätstyp `rule`, falls in echten Sessions > ⅓ der Aussagen im Freitext landet.
