@@ -1,0 +1,52 @@
+relationship 2d92c7e7-1153-5510-80cb-a63c9aaa93fe
+	fromColumn: 'Fakt Auftragsposition'.kunde_id
+	toColumn: 'Dim Kunde'.kunde_id
+
+relationship 0f2a7812-7cc2-5587-a071-c89b70a60bc7
+	fromColumn: 'Fakt Auftragsposition'.produkt_id
+	toColumn: 'Dim Produkt'.produkt_id
+
+relationship e3d07821-e253-5d83-84a6-d87a05dfe5d0
+	fromColumn: 'Fakt Auftragsposition'.werk_id
+	toColumn: 'Dim Werk'.werk_id
+
+relationship 6e1bc316-cc30-5cd4-b503-2158b7dd4052
+	fromColumn: 'Fakt Auftragsposition'.bestaetigt_am
+	toColumn: 'Dim Datum'.datum
+
+relationship 6984668b-46ba-50ab-8c94-8b78759f47c6
+	fromColumn: 'Fakt Faktura'.kunde_id
+	toColumn: 'Dim Kunde'.kunde_id
+
+relationship cc32fb32-3833-5d6c-9075-8a4e7514d5e7
+	fromColumn: 'Fakt Faktura'.produkt_id
+	toColumn: 'Dim Produkt'.produkt_id
+
+relationship 34cd8d1f-feeb-563c-931a-21b28e9079bf
+	fromColumn: 'Fakt Faktura'.fakturadatum
+	toColumn: 'Dim Datum'.datum
+
+relationship f65996cb-5867-5e61-a3ab-226495c7ed9d
+	fromColumn: 'Fakt Kapazität'.werk_id
+	toColumn: 'Dim Werk'.werk_id
+
+relationship 07992e83-a642-58d8-b7cc-7384d87f55b6
+	fromColumn: 'Fakt Kapazität'.monat
+	toColumn: 'Dim Datum'.datum
+
+relationship 9391f9ce-4456-5d7b-874c-fcb0ad840b96
+	fromColumn: 'Fakt Lieferung'.kunde_id
+	toColumn: 'Dim Kunde'.kunde_id
+
+relationship ba2d9bae-c4c4-5d71-80ca-6024c87c8dd9
+	fromColumn: 'Fakt Lieferung'.werk_id
+	toColumn: 'Dim Werk'.werk_id
+
+relationship ef5a4c99-36bf-5971-8ffb-80219e97ea0e
+	fromColumn: 'Fakt Lieferung'.lieferdatum
+	toColumn: 'Dim Datum'.datum
+
+relationship e38afab2-58bc-51b4-9ee7-b216e9f7b146
+	fromColumn: 'Fakt Lieferzusage'.zugesagt_am
+	toColumn: 'Dim Datum'.datum
+

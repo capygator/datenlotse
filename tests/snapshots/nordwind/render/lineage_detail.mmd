@@ -1,0 +1,56 @@
+%% lotse render mermaid --view lineage_detail
+%% Nordwind Maschinenbau GmbH: Lineage (Detail)
+%% Datenfluss Quelle → Tabelle → Kennzahl → Datenprodukt → Entscheidung, jede Kennzahl als eigener Knoten.
+flowchart LR
+    subgraph lane0["Quelle"]
+        source-erp["ERP"]
+        source-mes["MES"]
+    end
+    subgraph lane1["Tabelle"]
+        table-fact_auftragsposition["Fakt Auftragsposition"]
+        table-fact_faktura["Fakt Faktura"]
+        table-fact_kapazitaet["Fakt Kapazität"]
+        table-fact_lieferung["Fakt Lieferung"]
+        table-fact_lieferzusage["Fakt Lieferzusage<br/>[Entwurf · Lücke]"]
+    end
+    subgraph lane2["Kennzahl"]
+        measure-auftragsbestand["Auftragsbestand"]
+        measure-auftragseingang["Auftragseingang"]
+        measure-auftragsreichweite["Auftragsreichweite"]
+        measure-kapazitaetsauslastung["Kapazitätsauslastung"]
+        measure-liefertreue["Liefertreue<br/>[Entwurf]"]
+        measure-umsatz["Umsatz"]
+    end
+    subgraph lane3["Datenprodukt"]
+        product-auftragsbestand-cockpit["Auftragsbestand-Cockpit"]
+    end
+    subgraph lane4["Entscheidung"]
+        decision-kapazitaetsplanung["Kapazitätsplanung Fertigung"]
+    end
+    measure-auftragsbestand -->|"Kennzahlen"| product-auftragsbestand-cockpit
+    measure-auftragseingang -->|"Kennzahlen"| product-auftragsbestand-cockpit
+    measure-auftragsreichweite -->|"Kennzahlen"| product-auftragsbestand-cockpit
+    measure-kapazitaetsauslastung -->|"Kennzahlen"| product-auftragsbestand-cockpit
+    measure-liefertreue -->|"Kennzahlen"| product-auftragsbestand-cockpit
+    measure-umsatz -->|"Kennzahlen"| product-auftragsbestand-cockpit
+    product-auftragsbestand-cockpit -->|"stützt"| decision-kapazitaetsplanung
+    source-erp -->|"liefert"| table-fact_auftragsposition
+    source-erp -->|"liefert"| table-fact_faktura
+    source-erp -->|"liefert"| table-fact_lieferung
+    source-mes -->|"liefert"| table-fact_kapazitaet
+    table-fact_auftragsposition -->|"speist"| measure-auftragsbestand
+    table-fact_auftragsposition -->|"speist"| measure-auftragseingang
+    table-fact_auftragsposition -->|"speist"| measure-auftragsreichweite
+    table-fact_auftragsposition -->|"speist"| measure-kapazitaetsauslastung
+    table-fact_faktura -->|"speist"| measure-umsatz
+    table-fact_kapazitaet -->|"speist"| measure-auftragsreichweite
+    table-fact_kapazitaet -->|"speist"| measure-kapazitaetsauslastung
+    table-fact_lieferung -->|"speist"| measure-liefertreue
+    table-fact_lieferzusage -->|"speist"| measure-liefertreue
+    classDef agreed fill:#e8f5e9,stroke:#2e7d32,color:#1b1b1b
+    classDef draft fill:#fff8e1,stroke:#f9a825,color:#1b1b1b
+    classDef conflict fill:#ffebee,stroke:#c62828,color:#1b1b1b
+    classDef finding stroke-width:3px,stroke-dasharray:4 3
+    class source-erp,source-mes,table-fact_auftragsposition,table-fact_faktura,table-fact_kapazitaet,table-fact_lieferung,measure-auftragsbestand,measure-auftragseingang,measure-auftragsreichweite,measure-kapazitaetsauslastung,measure-umsatz,product-auftragsbestand-cockpit,decision-kapazitaetsplanung agreed
+    class table-fact_lieferzusage,measure-liefertreue draft
+    class table-fact_lieferzusage finding

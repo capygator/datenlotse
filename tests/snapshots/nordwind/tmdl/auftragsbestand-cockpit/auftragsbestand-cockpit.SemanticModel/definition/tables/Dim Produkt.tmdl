@@ -1,0 +1,32 @@
+/// lotse: table.dim_produkt (dimension, Status: agreed)
+table 'Dim Produkt'
+	lineageTag: 951b0b10-d6e6-5b57-81c8-417bf592c4de
+
+	column produkt_id
+		dataType: string
+		isKey
+		lineageTag: 66e722ca-fd73-5109-bcf8-b5241c727b5b
+		summarizeBy: none
+		sourceColumn: produkt_id
+
+	column produkt
+		dataType: string
+		lineageTag: 6d3abe2a-22cd-5d14-adaf-149b5fb501d3
+		summarizeBy: none
+		sourceColumn: produkt
+
+	column produktlinie
+		dataType: string
+		lineageTag: 57ab6048-a124-5301-b309-96f8467b3495
+		summarizeBy: none
+		sourceColumn: produktlinie
+
+	partition 'Dim Produkt' = m
+		mode: import
+		source =
+				let
+					// Platzhalter aus lotse (table.dim_produkt), Quelle: ERP (SAP S/4HANA)
+					Quelle = #table(type table [produkt_id = text, produkt = text, produktlinie = text], {})
+				in
+					Quelle
+

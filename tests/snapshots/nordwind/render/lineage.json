@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Nordwind Maschinenbau GmbH: Lineage",
+    "locale": "de",
+    "subtitle": "Datenfluss Quelle → Tabelle → Kennzahlen → Datenprodukt → Entscheidung. Kennzahlen sind je Owner zu einem Block zusammengefasst, damit das Bild bei rund 8 bis 12 Kernknoten bleibt.",
+    "output": "lineage.html"
+  },
+  "stages": [
+    {
+      "label": "Quelle"
+    },
+    {
+      "label": "Tabelle"
+    },
+    {
+      "label": "Kennzahl"
+    },
+    {
+      "label": "Datenprodukt"
+    },
+    {
+      "label": "Entscheidung"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "source-erp",
+      "type": "external",
+      "label": "ERP",
+      "stage": 0,
+      "row": 0
+    },
+    {
+      "id": "source-mes",
+      "type": "external",
+      "label": "MES",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "table-fact_auftragsposition",
+      "type": "database",
+      "label": "Fakt Auftragsposition",
+      "stage": 1,
+      "row": 0
+    },
+    {
+      "id": "table-fact_faktura",
+      "type": "database",
+      "label": "Fakt Faktura",
+      "stage": 1,
+      "row": 1
+    },
+    {
+      "id": "table-fact_kapazitaet",
+      "type": "database",
+      "label": "Fakt Kapazität",
+      "stage": 1,
+      "row": 2
+    },
+    {
+      "id": "table-fact_lieferung",
+      "type": "database",
+      "label": "Fakt Lieferung",
+      "stage": 1,
+      "row": 3
+    },
+    {
+      "id": "table-fact_lieferzusage",
+      "type": "database",
+      "label": "Fakt Lieferzusage",
+      "tag": "Entwurf · Lücke",
+      "stage": 1,
+      "row": 4
+    },
+    {
+      "id": "block-controlling-leitung",
+      "type": "backend",
+      "label": "Leitung Controlling",
+      "sublabel": "Auftragsbestand, Auftragsreichweite, Umsatz",
+      "stage": 2,
+      "row": 0
+    },
+    {
+      "id": "block-fertigung-leitung",
+      "type": "backend",
+      "label": "Leitung Fertigungsplanung",
+      "sublabel": "Kapazitätsauslastung",
+      "stage": 2,
+      "row": 1
+    },
+    {
+      "id": "block-vertrieb-leitung",
+      "type": "backend",
+      "label": "Leitung Vertrieb",
+      "sublabel": "Auftragseingang, Liefertreue",
+      "tag": "Entwurf",
+      "stage": 2,
+      "row": 2
+    },
+    {
+      "id": "product-auftragsbestand-cockpit",
+      "type": "frontend",
+      "label": "Auftragsbestand-Cockpit",
+      "stage": 3,
+      "row": 0
+    },
+    {
+      "id": "decision-kapazitaetsplanung",
+      "type": "external",
+      "label": "Kapazitätsplanung Fertigung",
+      "icon": "flag",
+      "stage": 4,
+      "row": 0
+    }
+  ],
+  "flows": [
+    {
+      "from": "block-controlling-leitung",
+      "to": "product-auftragsbestand-cockpit",
+      "label": "Kennzahlen"
+    },
+    {
+      "from": "block-fertigung-leitung",
+      "to": "product-auftragsbestand-cockpit",
+      "label": "Kennzahlen"
+    },
+    {
+      "from": "block-vertrieb-leitung",
+      "to": "product-auftragsbestand-cockpit",
+      "label": "Kennzahlen",
+      "variant": "dashed"
+    },
+    {
+      "from": "product-auftragsbestand-cockpit",
+      "to": "decision-kapazitaetsplanung",
+      "label": "stützt"
+    },
+    {
+      "from": "source-erp",
+      "to": "table-fact_auftragsposition",
+      "label": "liefert"
+    },
+    {
+      "from": "source-erp",
+      "to": "table-fact_faktura",
+      "label": "liefert"
+    },
+    {
+      "from": "source-erp",
+      "to": "table-fact_lieferung",
+      "label": "liefert"
+    },
+    {
+      "from": "source-mes",
+      "to": "table-fact_kapazitaet",
+      "label": "liefert"
+    },
+    {
+      "from": "table-fact_auftragsposition",
+      "to": "block-controlling-leitung",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_auftragsposition",
+      "to": "block-fertigung-leitung",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_auftragsposition",
+      "to": "block-vertrieb-leitung",
+      "label": "speist",
+      "variant": "dashed"
+    },
+    {
+      "from": "table-fact_faktura",
+      "to": "block-controlling-leitung",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_kapazitaet",
+      "to": "block-controlling-leitung",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_kapazitaet",
+      "to": "block-fertigung-leitung",
+      "label": "speist"
+    },
+    {
+      "from": "table-fact_lieferung",
+      "to": "block-vertrieb-leitung",
+      "label": "speist",
+      "variant": "dashed"
+    },
+    {
+      "from": "table-fact_lieferzusage",
+      "to": "block-vertrieb-leitung",
+      "label": "speist",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Offene Befunde",
+      "items": [
+        "Fakt Lieferzusage: Lücke"
+      ]
+    }
+  ]
+}

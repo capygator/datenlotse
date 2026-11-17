@@ -80,10 +80,10 @@ def build_graph(loaded: LoadResult) -> Graph:
                     edges.add((src, d.statement, "definition_statement"))
             attrs.extend((src, "quality", q.rule) for q in model.quality)
         if isinstance(model, Table):
-            for col in model.columns:
-                attrs.append(
-                    (src, "column", json.dumps(col.model_dump(exclude_none=True), sort_keys=True))
-                )
+            for pos, col in enumerate(model.columns):
+                # pos erhält die YAML-Reihenfolge, obwohl attr sortiert gespeichert wird.
+                payload = {"pos": pos, **col.model_dump(exclude_none=True)}
+                attrs.append((src, "column", json.dumps(payload, sort_keys=True)))
                 if col.references:
                     edges.add((src, col.references, "column_references"))
 

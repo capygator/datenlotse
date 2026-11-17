@@ -17,9 +17,11 @@ uv run mypy src/lotse                           # strict über pyproject
 uv run lotse check -w demo/nordwind             # Exit 1 bei error-Befunden
 uv run lotse schema                             # schemas/*.json nach Modelländerung neu erzeugen
 uv run lotse serve -w demo/nordwind --no-open   # Live-Viewer auf http://127.0.0.1:8765/
+uv run lotse render archify --view lineage -w demo/nordwind   # → demo/nordwind/out/lineage.json
+LOTSE_UPDATE_SNAPSHOTS=1 uv run pytest tests/test_generators.py  # Generator-Snapshots neu schreiben
 ```
 
-CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`, `serve [--host 127.0.0.1] [--port 8765] [--open/--no-open]`, `gen ado [--apply --org … --project … --process agile|scrum]`. Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
+CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`, `render <mermaid|archify> --view <name>`, `render views`, `serve [--host 127.0.0.1] [--port 8765] [--open/--no-open]`, `gen <odcs|tmdl>`, `gen ado [--apply --org … --project … --process agile|scrum]`. Ausgabe von `render`/`gen` standardmäßig nach `<workspace>/out/` (gitignored), `-o DIR` überschreibt; `gen` schreibt in `<out>/<generator>/` und ersetzt dort nur eigene Ausgaben (Projektordner je Produkt bzw. `*.odcs.yaml`). Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
 
 ## Architektur
 
@@ -33,6 +35,9 @@ CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `stat
 - **Live-Pfad** (`serve/`): `app.py` startet per Lifespan einen `watchfiles`-Wächter (nur `*.yaml`, `.lotse/` ignoriert) → voller Neubau in eigene Datei `.lotse/serve.duckdb` (kollidiert nicht mit parallelen CLI-Läufen) → `state.make_snapshot` (Knoten mit Darstellungsstatus und Inhalts-Hash, Kanten, Befunde, Stufen) → `diff.diff_snapshots` (reine Logik) → SSE an alle Clients. API liest nur die gecachte Momentaufnahme, nie DuckDB. Darstellungsstatus: Befund `error`/`conflict`/`gap` schlägt YAML-`status`, `warn`/`info` nicht.
 - **Endpunkte**: `GET /` (Viewer), `GET /api/graph` (Stand inkl. Befunde, Stufen, `version`, `caption`), `GET /api/node/{id}` (Definitionen, Herkunft, offene Fragen, Nachbarn), `GET /api/events` (SSE: `snapshot` beim Verbinden, dann `diff` und `caption`), `POST /api/caption` (`{question, answer, text}`, leerer Body löscht; für Einblendungen im Replay, M3). Einblendung ist reiner Anzeigezustand, nicht Teil des Modells.
 - **Viewer**: `src/lotse/viewer/index.html` (im Paket, geladen per `importlib.resources`; Konzept nennt `viewer/`). Eine Seite ohne Build, Cytoscape.js 3.30.2 + elkjs 0.9.3 + cytoscape-elk 2.2.0 im Paket unter `viewer/vendor/` (offline, Lizenzen daneben, ausgeliefert über `GET /vendor/{name}`); Spalten über ELK-Partitionierung (Stufe = Partition), ohne ELK Ersatzlayout in festen Spalten. Schreibt nichts außer optional Theme in `localStorage`.
+- **Sichten** sind `src/lotse/views/*.sql` mit Kopf `-- title:`, `-- kind: flow|erd`, `-- description:` und festen Spalten (`views/__init__.py`: `element, id, label, sublabel, lane, lane_label, status, finding, src, dst, detail`). `lineage` fasst Kennzahlen je Owner zu Blöcken zusammen (Archify ≤ 12 Knoten), `lineage_detail` zeigt jede Kennzahl, `model` liefert Tabellen + Fremdschlüssel. Spaltenreihenfolge kommt aus `pos` im `column`-Attribut.
+- **Renderer** (`src/lotse/render/`) implementieren `Renderer.render(ViewResult) -> str`; `archify` validiert gegen die vendorten Schemas (`render/schemas/archify/`, Archify 3.2.0), `flow` → `dataflow` (max. 5 Stufen), `erd` → `erd`.
+- **Generatoren** (`src/lotse/gen/`) bauen vorher neu und brechen bei `error`-Befunden ab; sie lesen die Pydantic-Entitäten aus `BuildResult` und liefern `{relativer Pfad: Text}`. Neue Befehle in `gen/cli.py` (`gen_app`) ergänzen; Untergruppen importieren aus `cli_common.py`, nie aus `cli.py`. `odcs` validiert gegen `gen/schemas/odcs-json-schema-v3.1.0.json` (Tag v3.1.0, Quelle in `gen/schemas/README.md`). `tmdl` erzeugt je Produkt ein PBIP (SemanticModel in TMDL + leerer PBIR-Bericht); lineageTags = UUIDv5 aus der lotse-id; Format entspricht byte-genau dem Roundtrip durch Microsofts `TmdlSerializer`.
 - **Stufen**: Entscheidung → Datenprodukt → Kennzahl → Dimension → Tabelle → Quelle (`registry.ENTITY_TYPES`); Stakeholder, Aussagen und Fragen haben keine Stufe.
 
 ## Invarianten
@@ -46,7 +51,7 @@ CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `stat
 
 ## Tests
 
-`tests/conftest.py` stellt `BASE` (befundfreier Mini-Workspace) und das Fixture `run` bereit; Regeltests mutieren `BASE` (je Regel positiv + negativ). `test_nordwind.py` fixiert die exakte Befundliste und prüft Determinismus des Neubaus. `test_gen_ado.py`: Snapshot `tests/snapshots/ado/` (neu schreiben mit `LOTSE_UPDATE_SNAPSHOTS=1`), `--apply` gegen `tests/ado_fake.py` (simuliertes ADO auf HTTP-Ebene). `test_serve_live.py` startet echten uvicorn in einem Thread und misst Speichern → SSE-Diff (< 2 s); SSE nie über `TestClient` testen (unendlicher Stream). Dev-Abhängigkeit `httpx2` (Starlette-TestClient).
+`tests/conftest.py` stellt `BASE` (befundfreier Mini-Workspace) und das Fixture `run` bereit; Regeltests mutieren `BASE` (je Regel positiv + negativ). `test_nordwind.py` fixiert die exakte Befundliste und prüft Determinismus des Neubaus. `test_gen_ado.py`: Snapshot `tests/snapshots/ado/` (neu schreiben mit `LOTSE_UPDATE_SNAPSHOTS=1`), `--apply` gegen `tests/ado_fake.py` (simuliertes ADO auf HTTP-Ebene). `test_serve_live.py` startet echten uvicorn in einem Thread und misst Speichern → SSE-Diff (< 2 s); SSE nie über `TestClient` testen (unendlicher Stream). Dev-Abhängigkeit `httpx2` (Starlette-TestClient). `test_generators.py` vergleicht alle Render-/Generator-Ausgaben byte-genau mit `tests/snapshots/nordwind/` und prüft zwei Läufe auf Gleichheit.
 
 ## Offene Entscheidungen (nicht eigenmächtig treffen, nachfragen)
 

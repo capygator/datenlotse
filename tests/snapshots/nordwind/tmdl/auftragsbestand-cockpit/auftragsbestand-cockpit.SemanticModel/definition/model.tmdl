@@ -1,0 +1,17 @@
+/// Auftragsbestand-Cockpit (lotse: product.auftragsbestand-cockpit)
+model Model
+	culture: de-DE
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: de-DE
+
+ref table 'Dim Datum'
+ref table 'Dim Kunde'
+ref table 'Dim Produkt'
+ref table 'Dim Werk'
+ref table 'Fakt Auftragsposition'
+ref table 'Fakt Faktura'
+ref table 'Fakt Kapazität'
+ref table 'Fakt Lieferung'
+ref table 'Fakt Lieferzusage'
+

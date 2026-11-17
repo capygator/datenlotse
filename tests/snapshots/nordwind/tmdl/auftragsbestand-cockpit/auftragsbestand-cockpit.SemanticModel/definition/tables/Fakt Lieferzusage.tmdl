@@ -1,0 +1,31 @@
+/// Zugesagter Liefertermin je Auftragsposition
+/// lotse: table.fact_lieferzusage (fact, Status: draft)
+table 'Fakt Lieferzusage'
+	lineageTag: 40cc69f2-8166-5a8e-a2ca-e946aeb3a368
+
+	column auftragsposition_id
+		dataType: string
+		isKey
+		lineageTag: 5c413136-892c-5599-baea-b89e8dd84ea6
+		summarizeBy: none
+		sourceColumn: auftragsposition_id
+
+	column zugesagt_am
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: 1df7a1f3-f960-5dde-b831-7d02481aab98
+		summarizeBy: none
+		sourceColumn: zugesagt_am
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'Fakt Lieferzusage' = m
+		mode: import
+		source =
+				let
+					// Platzhalter aus lotse (table.fact_lieferzusage), Quelle: offen
+					Quelle = #table(type table [auftragsposition_id = text, zugesagt_am = date], {})
+				in
+					Quelle
+

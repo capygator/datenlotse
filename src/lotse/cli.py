@@ -8,10 +8,11 @@ from typing import Annotated
 
 import typer
 
-from lotse.gen.ado.cli import ado as gen_ado
+from lotse.gen.cli import gen_app
 from lotse.model.registry import SEVERITIES
 from lotse.model.schema import write_schemas
 from lotse.query import next_question, stage_status
+from lotse.render.cli import render_app
 from lotse.store.build import BuildResult, build
 from lotse.store.workspace import WorkspaceError, find_workspace, init_workspace
 
@@ -21,6 +22,8 @@ app = typer.Typer(
     no_args_is_help=True,
     add_completion=False,
 )
+app.add_typer(render_app, name="render")
+app.add_typer(gen_app, name="gen")
 
 WorkspaceOpt = Annotated[
     Path | None,
@@ -152,11 +155,6 @@ def schema(
     """JSON-Schemas aus dem Modell exportieren."""
     for path in write_schemas(out):
         typer.echo(str(path))
-
-
-gen_app = typer.Typer(help="Artefakte aus dem Workspace generieren.", no_args_is_help=True)
-gen_app.command("ado")(gen_ado)
-app.add_typer(gen_app, name="gen")
 
 
 @app.command()
