@@ -1,0 +1,12 @@
+act: 5
+title: Einigung
+question: Welche Definition des Auftragsbestands gilt für die Kapazitätsplanung?
+answer: Wir nehmen die Definition des Vertriebs. Für die Kapazitätsplanung zählt, was noch nicht geliefert ist, nicht, was fakturiert ist.
+by: stakeholder.geschaeftsfuehrung
+command: /lotse-decide auftragsbestand
+copy:
+  - statements/0012.yaml
+  - measures/auftragsbestand.yaml
+  - lotse.yaml
+expect:
+  - {rule: table_without_source, node: table.fact_lieferzusage}

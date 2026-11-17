@@ -1,0 +1,86 @@
+act: 2
+title: Kennzahlen
+question: Woran macht ihr fest, ob die Werke richtig ausgelastet sind?
+answer: Sechs Kennzahlen – Auftragsbestand, Auftragseingang, Umsatz, Liefertreue, Kapazitätsauslastung und Auftragsreichweite.
+copy:
+  - statements/0003.yaml
+  - statements/0004.yaml
+  - statements/0005.yaml
+  - statements/0006.yaml
+  - statements/0008.yaml
+  - statements/0010.yaml
+  - products/auftragsbestand-cockpit.yaml
+write:
+  measures/auftragsbestand.yaml:
+    id: measure.auftragsbestand
+    name: Auftragsbestand
+    status: draft
+    owner: stakeholder.controlling-leitung
+    definitions:
+      - by: stakeholder.vertrieb-leitung
+        text: Summe aller bestätigten, noch nicht gelieferten Auftragspositionen
+        statement: statement.0010
+    serves: [decision.kapazitaetsplanung]
+  measures/auftragseingang.yaml:
+    id: measure.auftragseingang
+    name: Auftragseingang
+    status: draft
+    owner: stakeholder.vertrieb-leitung
+    definitions:
+      - by: stakeholder.vertrieb-leitung
+        text: Nettowert der im Monat bestätigten Auftragspositionen
+        statement: statement.0004
+    serves: [decision.kapazitaetsplanung]
+  measures/umsatz.yaml:
+    id: measure.umsatz
+    name: Umsatz
+    status: draft
+    owner: stakeholder.controlling-leitung
+    definitions:
+      - by: stakeholder.controlling-leitung
+        text: Fakturierter Nettoumsatz
+        statement: statement.0005
+    serves: [decision.kapazitaetsplanung]
+  measures/liefertreue.yaml:
+    id: measure.liefertreue
+    name: Liefertreue
+    status: draft
+    owner: stakeholder.vertrieb-leitung
+    definitions:
+      - by: stakeholder.vertrieb-leitung
+        text: Anteil der Lieferpositionen, die spätestens am zugesagten Liefertermin geliefert wurden
+        statement: statement.0006
+    serves: [decision.kapazitaetsplanung]
+  measures/kapazitaetsauslastung.yaml:
+    id: measure.kapazitaetsauslastung
+    name: Kapazitätsauslastung
+    status: draft
+    owner: stakeholder.fertigung-leitung
+    definitions:
+      - by: stakeholder.fertigung-leitung
+        text: Geplante Fertigungsstunden aus dem Auftragsbestand geteilt durch verfügbare Kapazitätsstunden
+        statement: statement.0003
+    serves: [decision.kapazitaetsplanung]
+  measures/auftragsreichweite.yaml:
+    id: measure.auftragsreichweite
+    name: Auftragsreichweite
+    status: draft
+    owner: stakeholder.controlling-leitung
+    definitions:
+      - by: stakeholder.controlling-leitung
+        text: Auftragsbestand in Fertigungsstunden geteilt durch die durchschnittliche Monatskapazität
+        statement: statement.0008
+    serves: [decision.kapazitaetsplanung]
+expect:
+  - {rule: measure_without_table, node: measure.auftragsbestand}
+  - {rule: measure_without_table, node: measure.auftragseingang}
+  - {rule: measure_without_table, node: measure.auftragsreichweite}
+  - {rule: measure_without_table, node: measure.kapazitaetsauslastung}
+  - {rule: measure_without_table, node: measure.liefertreue}
+  - {rule: measure_without_table, node: measure.umsatz}
+  - {rule: missing_grain, node: measure.auftragsbestand}
+  - {rule: missing_grain, node: measure.auftragseingang}
+  - {rule: missing_grain, node: measure.auftragsreichweite}
+  - {rule: missing_grain, node: measure.kapazitaetsauslastung}
+  - {rule: missing_grain, node: measure.liefertreue}
+  - {rule: missing_grain, node: measure.umsatz}

@@ -1,0 +1,22 @@
+act: 0
+title: Leerer Workspace
+question: Wer ist heute dabei?
+answer: Geschäftsführung, Leitung Vertrieb, Leitung Controlling und Leitung Fertigungsplanung.
+write:
+  lotse.yaml:
+    name: Nordwind Maschinenbau GmbH
+    platform: fabric
+    description: Auftragsbestand-Cockpit für die Kapazitätsplanung der Fertigung
+    stages:
+      decision: active
+      product: open
+      measure: open
+      dimension: open
+      table: open
+      source: open
+copy:
+  - stakeholders/controlling-leitung.yaml
+  - stakeholders/fertigung-leitung.yaml
+  - stakeholders/geschaeftsfuehrung.yaml
+  - stakeholders/vertrieb-leitung.yaml
+expect: []
