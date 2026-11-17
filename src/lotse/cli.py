@@ -8,6 +8,7 @@ from typing import Annotated
 
 import typer
 
+from lotse.gen.ado.cli import ado as gen_ado
 from lotse.model.registry import SEVERITIES
 from lotse.model.schema import write_schemas
 from lotse.query import next_question, stage_status
@@ -151,6 +152,11 @@ def schema(
     """JSON-Schemas aus dem Modell exportieren."""
     for path in write_schemas(out):
         typer.echo(str(path))
+
+
+gen_app = typer.Typer(help="Artefakte aus dem Workspace generieren.", no_args_is_help=True)
+gen_app.command("ado")(gen_ado)
+app.add_typer(gen_app, name="gen")
 
 
 if __name__ == "__main__":
