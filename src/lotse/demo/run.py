@@ -82,8 +82,12 @@ def post_caption(base_url: str, step: Step | None) -> None:
         pass
 
 
-def run_step_commands(step: Step, workspace: Path, echo: Callable[[str], None]) -> None:
-    """Führt ``lotse …``-Befehle eines Schritts aus (z. B. Generatoren in Akt 6)."""
+def run_step_commands(step: Step, workspace: Path, echo: Callable[[str], None]) -> list[str]:
+    """Führt ``lotse …``-Befehle eines Schritts aus (z. B. Generatoren in Akt 6).
+
+    Liefert die fehlgeschlagenen Befehle.
+    """
+    failed: list[str] = []
     for command in step.commands:
         parts = command.split()
         if not parts or parts[0] != "lotse":
@@ -97,6 +101,10 @@ def run_step_commands(step: Step, workspace: Path, echo: Callable[[str], None]) 
         )
         for line in (proc.stdout + proc.stderr).strip().splitlines()[-3:]:
             echo(f"    {line}")
+        if proc.returncode != 0:
+            echo(f"    ✗ Exit-Code {proc.returncode}")
+            failed.append(command)
+    return failed
 
 
 def play(
@@ -106,8 +114,12 @@ def play(
     wait: Callable[[], None],
     echo: Callable[[str], None],
     run_commands: bool = True,
-) -> list[StepResult]:
-    """Spielt alle Schritte ab; ``wait`` blockiert zwischen den Schritten."""
+) -> tuple[list[StepResult], list[str]]:
+    """Spielt alle Schritte ab; ``wait`` blockiert zwischen den Schritten.
+
+    Liefert die Schrittergebnisse und die fehlgeschlagenen Befehle.
+    """
+    failed_commands: list[str] = []
 
     def before(index: int, name: str, step: Step) -> None:
         echo("")
@@ -129,10 +141,26 @@ def play(
             echo(f"    fehlend: {result.missing}")
             echo(f"    unerwartet: {result.unexpected}")
         if run_commands:
-            run_step_commands(result.step, paths.workspace, echo)
+            failed_commands.extend(run_step_commands(result.step, paths.workspace, echo))
         wait()
 
-    return replay(paths.steps, paths.final, paths.workspace, before_step=before, after_step=after)
+    results = replay(
+        paths.steps, paths.final, paths.workspace, before_step=before, after_step=after
+    )
+    return results, failed_commands
+
+
+REPLAY_MARKER = ".lotse-replay"
+"""Markerdatei: Nur so markierte (oder leere) Ordner darf der Replay leeren."""
+
+
+def prepare_target(target: Path) -> None:
+    """Prüft, ob ``target`` geleert werden darf, und markiert ihn als Replay-Ziel."""
+    if target.exists() and any(target.iterdir()) and not (target / REPLAY_MARKER).exists():
+        raise RuntimeError(
+            f"{target} ist nicht leer und kein früheres Replay-Ziel; der Replay würde ihn leeren."
+        )
+    target.mkdir(parents=True, exist_ok=True)
 
 
 def record(url: str, out: Path, duration_hint: float) -> Callable[[], Path]:

@@ -212,7 +212,14 @@ def demo(
 
     import click
 
-    from lotse.demo.run import DemoPaths, play, record, running_server
+    from lotse.demo.run import (
+        REPLAY_MARKER,
+        DemoPaths,
+        play,
+        prepare_target,
+        record,
+        running_server,
+    )
 
     if not (demo_dir / "nordwind" / "lotse.yaml").is_file():
         typer.echo(f"Kein Demo-Ordner unter {demo_dir} (erwartet nordwind/lotse.yaml).", err=True)
@@ -223,7 +230,12 @@ def demo(
 
     auto = auto or record_video
     paths = DemoPaths.from_demo_dir(demo_dir, target.resolve())
-    paths.workspace.mkdir(parents=True, exist_ok=True)
+    try:
+        prepare_target(paths.workspace)
+    except RuntimeError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(2) from exc
+    (paths.workspace / REPLAY_MARKER).touch()
     (paths.workspace / "lotse.yaml").write_text("name: Demo\n", encoding="utf-8")
 
     def wait() -> None:
@@ -246,13 +258,16 @@ def demo(
         elif open_browser:
             webbrowser.open(url)
             time.sleep(1.5)
-        results = play(paths, base_url=url, wait=wait, echo=typer.echo)
+        results, failed_commands = play(paths, base_url=url, wait=wait, echo=typer.echo)
         if stop_recording:
             typer.echo(f"Video: {stop_recording()}")
     failed = [r.name for r in results if not r.ok]
     typer.echo("")
-    if failed:
-        typer.echo(f"✗ Abweichende Befunde in: {', '.join(failed)}")
+    if failed or failed_commands:
+        if failed:
+            typer.echo(f"✗ Abweichende Befunde in: {', '.join(failed)}")
+        if failed_commands:
+            typer.echo(f"✗ Fehlgeschlagene Befehle: {', '.join(failed_commands)}")
         raise typer.Exit(1)
     typer.echo(f"✓ {len(results)} Schritte, alle Befunde wie erwartet.")
 

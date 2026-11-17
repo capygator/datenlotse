@@ -78,6 +78,8 @@ def reset_workspace(target: Path) -> None:
     """Leert den Workspace, ohne den Ordner selbst zu löschen (Dateiwächter bleibt gültig)."""
     target.mkdir(parents=True, exist_ok=True)
     for child in target.iterdir():
+        if child.name == ".lotse-replay":
+            continue
         if child.is_dir() and not child.is_symlink():
             shutil.rmtree(child)
         else:

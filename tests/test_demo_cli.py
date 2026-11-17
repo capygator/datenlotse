@@ -41,7 +41,34 @@ def test_replay_auto_runs_through_with_viewer(tmp_path: Path) -> None:
     assert "✓ 9 Schritte, alle Befunde wie erwartet." in result.output
     assert "Akt 3 · Konflikt" in result.output
     assert (tmp_path / "replay" / "out" / "odcs").is_dir()
-    assert (tmp_path / "replay" / "out" / "ado" / "backlog.json").is_file()
+    out = tmp_path / "replay" / "out"
+    assert (out / "ado" / "backlog.json").is_file()
+    assert (out / "lineage.mmd").is_file()
+    assert (out / "tmdl" / "auftragsbestand-cockpit").is_dir()
+    assert "Exit-Code" not in result.output
+
+
+def test_replay_refuses_foreign_non_empty_target(tmp_path: Path) -> None:
+    target = tmp_path / "wichtig"
+    target.mkdir()
+    (target / "notizen.txt").write_text("nicht löschen")
+    result = runner.invoke(
+        app,
+        [
+            "demo",
+            "--replay",
+            "--auto",
+            "--no-open",
+            "--demo-dir",
+            str(REPO / "demo"),
+            "--target",
+            str(target),
+            "--port",
+            str(_free_port()),
+        ],
+    )
+    assert result.exit_code == 2
+    assert (target / "notizen.txt").read_text() == "nicht löschen"
 
 
 def test_demo_without_demo_dir_exits_2(tmp_path: Path) -> None:
