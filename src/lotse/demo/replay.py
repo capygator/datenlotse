@@ -75,9 +75,13 @@ def dump_yaml(data: object) -> str:
 
 
 def reset_workspace(target: Path) -> None:
-    if target.exists():
-        shutil.rmtree(target)
-    target.mkdir(parents=True)
+    """Leert den Workspace, ohne den Ordner selbst zu löschen (Dateiwächter bleibt gültig)."""
+    target.mkdir(parents=True, exist_ok=True)
+    for child in target.iterdir():
+        if child.is_dir() and not child.is_symlink():
+            shutil.rmtree(child)
+        else:
+            child.unlink()
 
 
 def apply_step(step: Step, workspace: Path, final_dir: Path) -> list[str]:

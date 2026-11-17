@@ -184,5 +184,78 @@ def serve(
     )
 
 
+@app.command()
+def demo(
+    replay_steps: Annotated[
+        bool, typer.Option("--replay", help="Schritte gegen leeren Workspace abspielen.")
+    ] = False,
+    auto: Annotated[bool, typer.Option("--auto", help="Selbstlauf statt Leertaste.")] = False,
+    delay: Annotated[float, typer.Option(help="Sekunden je Schritt bei --auto.")] = 4.0,
+    record_video: Annotated[
+        bool, typer.Option("--record", help="Video des Replays per Playwright (impliziert --auto).")
+    ] = False,
+    demo_dir: Annotated[Path, typer.Option(help="Ordner mit nordwind/ und replay/.")] = Path(
+        "demo"
+    ),
+    target: Annotated[Path, typer.Option(help="Workspace für den Replay (wird geleert).")] = Path(
+        "out/demo-replay"
+    ),
+    host: Annotated[str, typer.Option(help="Adresse des Webservers.")] = "127.0.0.1",
+    port: Annotated[int, typer.Option(help="Port des Webservers.")] = 8765,
+    open_browser: Annotated[
+        bool, typer.Option("--open/--no-open", help="Viewer im Browser öffnen.")
+    ] = True,
+) -> None:
+    """Demo starten: Endzustand erkunden oder mit --replay die sechs Akte abspielen."""
+    import time
+    import webbrowser
+
+    import click
+
+    from lotse.demo.run import DemoPaths, play, record, running_server
+
+    if not (demo_dir / "nordwind" / "lotse.yaml").is_file():
+        typer.echo(f"Kein Demo-Ordner unter {demo_dir} (erwartet nordwind/lotse.yaml).", err=True)
+        raise typer.Exit(2)
+    if not replay_steps:
+        serve(demo_dir / "nordwind", host, port, open_browser)
+        return
+
+    auto = auto or record_video
+    paths = DemoPaths.from_demo_dir(demo_dir, target.resolve())
+    paths.workspace.mkdir(parents=True, exist_ok=True)
+    (paths.workspace / "lotse.yaml").write_text("name: Demo\n", encoding="utf-8")
+
+    def wait() -> None:
+        if auto:
+            time.sleep(delay)
+            return
+        typer.echo("  [Leertaste] weiter · [q] beenden")
+        if click.getchar() in ("q", "Q"):
+            raise typer.Exit(0)
+
+    with running_server(paths.workspace, host, port) as url:
+        typer.echo(f"Viewer: {url}")
+        stop_recording = None
+        if record_video:
+            try:
+                stop_recording = record(url, Path("out/video"), delay)
+            except RuntimeError as exc:
+                typer.echo(str(exc), err=True)
+                raise typer.Exit(2) from exc
+        elif open_browser:
+            webbrowser.open(url)
+            time.sleep(1.5)
+        results = play(paths, base_url=url, wait=wait, echo=typer.echo)
+        if stop_recording:
+            typer.echo(f"Video: {stop_recording()}")
+    failed = [r.name for r in results if not r.ok]
+    typer.echo("")
+    if failed:
+        typer.echo(f"✗ Abweichende Befunde in: {', '.join(failed)}")
+        raise typer.Exit(1)
+    typer.echo(f"✓ {len(results)} Schritte, alle Befunde wie erwartet.")
+
+
 if __name__ == "__main__":
     app()
