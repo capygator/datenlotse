@@ -153,5 +153,32 @@ def schema(
         typer.echo(str(path))
 
 
+@app.command()
+def serve(
+    workspace: WorkspaceOpt = None,
+    host: Annotated[str, typer.Option(help="Adresse des Webservers.")] = "127.0.0.1",
+    port: Annotated[int, typer.Option(help="Port des Webservers.")] = 8765,
+    open_browser: Annotated[
+        bool, typer.Option("--open/--no-open", help="Viewer im Browser öffnen.")
+    ] = True,
+) -> None:
+    """Live-Viewer starten: Dateiwächter, Neubau bei Änderung, Graph per SSE."""
+    import threading
+    import webbrowser
+
+    import uvicorn
+
+    from lotse.serve import create_app
+
+    ws = resolve_workspace(workspace)
+    url = f"http://{host}:{port}/"
+    typer.echo(f"lotse serve: {ws} → {url} (Strg+C beendet)")
+    if open_browser:
+        threading.Timer(1.0, webbrowser.open, args=(url,)).start()
+    uvicorn.run(
+        create_app(ws), host=host, port=port, log_level="warning", timeout_graceful_shutdown=1
+    )
+
+
 if __name__ == "__main__":
     app()

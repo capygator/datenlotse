@@ -16,9 +16,10 @@ uv run ruff check . && uv run ruff format --check .
 uv run mypy src/lotse                           # strict über pyproject
 uv run lotse check -w demo/nordwind             # Exit 1 bei error-Befunden
 uv run lotse schema                             # schemas/*.json nach Modelländerung neu erzeugen
+uv run lotse serve -w demo/nordwind --no-open   # Live-Viewer auf http://127.0.0.1:8765/
 ```
 
-CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`. Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
+CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `status [--json]`, `schema`, `serve [--host 127.0.0.1] [--port 8765] [--open/--no-open]`. Workspace über `-w PATH`, sonst Suche nach `lotse.yaml` vom aktuellen Ordner aufwärts.
 
 ## Architektur
 
@@ -28,6 +29,9 @@ CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `stat
 - **Kanten** entstehen aus `graph.REF_FIELDS` (Kantenart = Feldname) plus `definition_by`, `definition_statement`, `column_references`. Neues ID-Feld → in `REF_FIELDS` aufnehmen, sonst fehlt es in `dangling_reference`.
 - **Regeln** sind `src/lotse/rules/*.sql`, eine pro Datei, Spalten `rule, severity, node_id, message`; `rule` muss dem Dateinamen entsprechen (wird geprüft). Severities in Rangfolge: `error`, `conflict`, `gap`, `warn`, `info` (`model/registry.py`).
 - **`query.py`**: `next_question` (Fehler zuerst, dann frühere Stufe, dann Severity; Fragetext aus `QUESTION_TEMPLATES`) und `stage_status`. `next` und `status` bauen vorher immer neu.
+- **Live-Pfad** (`serve/`): `app.py` startet per Lifespan einen `watchfiles`-Wächter (nur `*.yaml`, `.lotse/` ignoriert) → voller Neubau in eigene Datei `.lotse/serve.duckdb` (kollidiert nicht mit parallelen CLI-Läufen) → `state.make_snapshot` (Knoten mit Darstellungsstatus und Inhalts-Hash, Kanten, Befunde, Stufen) → `diff.diff_snapshots` (reine Logik) → SSE an alle Clients. API liest nur die gecachte Momentaufnahme, nie DuckDB. Darstellungsstatus: Befund `error`/`conflict`/`gap` schlägt YAML-`status`, `warn`/`info` nicht.
+- **Endpunkte**: `GET /` (Viewer), `GET /api/graph` (Stand inkl. Befunde, Stufen, `version`, `caption`), `GET /api/node/{id}` (Definitionen, Herkunft, offene Fragen, Nachbarn), `GET /api/events` (SSE: `snapshot` beim Verbinden, dann `diff` und `caption`), `POST /api/caption` (`{question, answer, text}`, leerer Body löscht; für Einblendungen im Replay, M3). Einblendung ist reiner Anzeigezustand, nicht Teil des Modells.
+- **Viewer**: `src/lotse/viewer/index.html` (im Paket, geladen per `importlib.resources`; Konzept nennt `viewer/`). Eine Seite ohne Build, Cytoscape.js 3.30.2 + elkjs 0.9.3 + cytoscape-elk 2.2.0 per CDN; Spalten über ELK-Partitionierung (Stufe = Partition), ohne ELK Ersatzlayout in festen Spalten. Schreibt nichts außer optional Theme in `localStorage`.
 - **Stufen**: Entscheidung → Datenprodukt → Kennzahl → Dimension → Tabelle → Quelle (`registry.ENTITY_TYPES`); Stakeholder, Aussagen und Fragen haben keine Stufe.
 
 ## Invarianten
@@ -41,7 +45,7 @@ CLI: `init <name> [--root workspaces]`, `build`, `check`, `next [--json]`, `stat
 
 ## Tests
 
-`tests/conftest.py` stellt `BASE` (befundfreier Mini-Workspace) und das Fixture `run` bereit; Regeltests mutieren `BASE` (je Regel positiv + negativ). `test_nordwind.py` fixiert die exakte Befundliste und prüft Determinismus des Neubaus.
+`tests/conftest.py` stellt `BASE` (befundfreier Mini-Workspace) und das Fixture `run` bereit; Regeltests mutieren `BASE` (je Regel positiv + negativ). `test_nordwind.py` fixiert die exakte Befundliste und prüft Determinismus des Neubaus. `test_serve_live.py` startet echten uvicorn in einem Thread und misst Speichern → SSE-Diff (< 2 s); SSE nie über `TestClient` testen (unendlicher Stream). Dev-Abhängigkeit `httpx2` (Starlette-TestClient).
 
 ## Offene Entscheidungen (nicht eigenmächtig treffen, nachfragen)
 
